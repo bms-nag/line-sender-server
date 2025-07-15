@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Dr.ぷぷのけんこう研究所</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'M PLUS Rounded 1c', sans-serif;
+            background: #EFF6FF;
+            -webkit-user-select: none; 
+            user-select: none;
+            overflow-y: auto;
+        }
+        .game-board {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        .progress-bar-container {
+            width: 100%;
+            background-color: #E0E7FF;
+            border-radius: 9999px;
+            height: 20px;
+            border: 3px solid #C7D2FE;
+            position: relative;
+        }
+        #progress-bar {
+            background: linear-gradient(90deg, #A5B4FC, #818CF8);
+            width: 0%;
+            height: 100%;
+            border-radius: 9999px;
+            transition: width 0.5s ease-out;
+        }
+        #pupu-progress-icon {
+            position: absolute;
+            top: 50%;
+            left: 0%;
+            transform: translate(-50%, -50%);
+            width: 48px;
+            height: 48px;
+            transition: left 0.5s ease-out;
+        }
+        .quiz-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+        }
+        .btn-choice {
+            border-radius: 9999px; font-weight: 800; font-size: 1.5rem; padding: 0.75rem 0;
+            cursor: pointer; transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 6px 0 0; border: 3px solid white;
+        }
+        .btn-choice:active { transform: translateY(4px); box-shadow: 0 2px 0 0; }
+        .btn-o { background-color: #fb7185; color: white; box-shadow-color: #e11d48; }
+        .btn-x { background-color: #38bdf8; color: white; box-shadow-color: #0284c7; }
+
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); backdrop-filter: blur(8px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 50; opacity: 0; pointer-events: none; transition: opacity 0.3s ease-out;
+            padding: 1rem;
+        }
+        .modal-overlay.visible { opacity: 1; pointer-events: auto; }
+        .modal-content {
+            background: transparent;
+            width: 100%;
+            max-width: 500px;
+            transform: scale(0.95); transition: transform 0.3s ease-out;
+        }
+        .modal-overlay.visible .modal-content { transform: scale(1); }
+
+        .action-button {
+             background: linear-gradient(180deg, #F9A8D4, #F472B6);
+             color: white; border-radius: 9999px; padding: 0.75rem 2rem;
+             font-weight: 800; font-size: 1.125rem; box-shadow: 0 5px 0 #DB2777;
+             border: 2px solid white; cursor: pointer; transition: all 0.1s ease-out;
+        }
+        .action-button:active { transform: translateY(3px); box-shadow: 0 2px 0 #DB2777; }
+        
+        /* --- Survey Styles --- */
+        .survey-container-wrapper {
+            width: 100%;
+            position: relative;
+        }
+        #pupu-guide-container {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        #pupu-guide {
+            width: 120px;
+            height: auto;
+            animation: pupu-breathing 3s infinite ease-in-out;
+        }
+        .survey-shell {
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05), 0 20px 20px -10px rgba(99, 102, 241, 0.2);
+            border: 1px solid #e0e7ff;
+        }
+        .survey-content-area {
+            position: relative;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .survey-screen-content {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+        .survey-progress-bar-container { width: 100%; background-color: #e5e7eb; border-radius: 9999px; height: 12px; overflow: hidden; border: 2px solid #e0e7ff;}
+        .survey-progress-bar { background: linear-gradient(to right, #818cf8, #a78bfa); height: 100%; border-radius: 9999px; transition: width 0.4s ease-out; }
+        
+        .survey-option-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1rem 0.5rem;
+            border-radius: 1rem;
+            background-color: #f3f4f6;
+            cursor: pointer;
+            transition: all 0.2s ease-out;
+            font-size: 1rem;
+            font-weight: 700;
+            border: 2px solid transparent;
+            min-height: 80px;
+        }
+        .survey-option-label .icon { font-size: 2rem; line-height: 1; }
+        .survey-option-label:hover { background-color: #e5e7eb; transform: scale(1.02); }
+        .survey-option-input:checked + .survey-option-label {
+            background-color: #e0e7ff;
+            color: #4338ca;
+            border-color: #6366f1;
+            animation: pop-select 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .likert-horizontal-container {
+            width: 100%;
+            margin: 2rem 0;
+        }
+        .likert-emoji-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            background-color: #f3f4f6;
+            border-radius: 9999px;
+        }
+        .likert-emoji-label {
+            font-size: 2.5rem;
+            cursor: pointer;
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            filter: grayscale(80%);
+            opacity: 0.6;
+        }
+        .likert-emoji-input:checked + .likert-emoji-label {
+            transform: scale(1.4);
+            filter: grayscale(0%);
+            opacity: 1;
+        }
+        .likert-annotation-bar {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 0.5rem;
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #6b7280;
+        }
+
+        .survey-nav-button {
+            background: linear-gradient(180deg, #818cf8, #6366f1);
+            color: white; font-weight: 800; padding: 1rem; border-radius: 9999px;
+            box-shadow: 0 5px 0 #4f46e5; transition: all 0.15s ease-out;
+            font-size: 1.1rem;
+        }
+        .survey-nav-button:active { transform: translateY(3px); box-shadow: 0 2px 0 #4f46e5; }
+        .survey-back-button { background: linear-gradient(180deg, #d1d5db, #9ca3af); box-shadow: 0 5px 0 #6b7280; }
+        .survey-back-button:active { transform: translateY(3px); box-shadow: 0 2px 0 #6b7280; }
+
+        /* --- Animations --- */
+        @keyframes content-fade-out { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-10px); } }
+        @keyframes content-fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .content-out { animation: content-fade-out 0.3s ease-out forwards; }
+        .content-in { animation: content-fade-in 0.4s ease-out forwards; }
+        
+        @keyframes pop-select { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        @keyframes pupu-breathing { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        @keyframes blinking-next {
+          0% { transform: scale(1); box-shadow: 0 5px 0 var(--shadow-color), 0 0 0 0 rgba(34, 197, 94, 0.7); }
+          70% { transform: scale(1.05); box-shadow: 0 5px 0 var(--shadow-color), 0 0 0 15px rgba(34, 197, 94, 0); }
+          100% { transform: scale(1); box-shadow: 0 5px 0 var(--shadow-color), 0 0 0 0 rgba(34, 197, 94, 0); }
+        }
+        .blinking-next-button {
+          animation: blinking-next 1.5s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-board">
+        <header class="text-center my-4"><h1 class="text-2xl font-extrabold text-slate-700">Dr.ぷぷのけんこう研究所</h1></header>
+        <div class="progress-bar-container mb-4">
+            <div id="progress-bar"></div>
+            <img id="pupu-progress-icon" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3Cfilter id='dropShadow' x='-20%25' y='-20%25' width='140%25' height='140%25'%3E%3CfeDropShadow dx='2' dy='4' stdDeviation='2' flood-color='%23000000' flood-opacity='0.2'/%3E%3C/filter%3E%3CradialGradient id='poopGradient' cx='0.5' cy='1' r='1'%3E%3Cstop offset='0%25' stop-color='%23A1887F'/%3E%3Cstop offset='100%25' stop-color='%235D4037'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cg filter='url(%23dropShadow)'%3E%3Cpath d='M50 95 C 20 95, 20 65, 50 65 C 80 65, 80 95, 50 95 Z' fill='url(%23poopGradient)'/%3E%3Cpath d='M50 70 C 28 70, 28 45, 50 45 C 72 45, 72 70, 50 70 Z' fill='url(%23poopGradient)'/%3E%3Cpath d='M50 50 C 38 50, 38 30, 50 30 C 62 30, 62 50, 50 50 Z' fill='url(%23poopGradient)'/%3E%3Ccircle cx='38' cy='68' r='7' fill='white'/%3E%3Ccircle cx='62' cy='68' r='7' fill='white'/%3E%3Ccircle cx='39' cy='69' r='4' fill='black'/%3E%3Ccircle cx='61' cy='69' r='4' fill='black'/%3E%3Cpath d='M45 82 Q 50 88 55 82' stroke='white' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/g%3E%3C/svg%3E" alt="ぷぷアイコン">
+        </div>
+        <div id="card-container" class="relative" style="min-height: 450px;"></div>
+    </div>
+    <div id="modal-container"></div>
+    
+    <script>
+        const quizData = [
+            { question: "大腸がんの初期には、必ずお腹の痛みや血便などの自覚症状がある。", correctAnswer: "×", explanation: "初期は症状がないことが多いんだ。だから検診が大事！", illustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle' dominant-baseline='middle'%3E🤫%3C/text%3E%3C/svg%3E`, explanationIllustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle'%3E👻%3C/text%3E%3C/svg%3E`},
+            { question: "便潜血検査で「異常なし」なら、もう大腸がんの心配はゼロだ！", correctAnswer: "×", explanation: "便潜血検査だけじゃ見逃すことも。気になるなら精密検査も考えよう！", illustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle' dominant-baseline='middle'%3E🧪%3C/text%3E%3C/svg%3E`, explanationIllustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle'%3E🔬%3C/text%3E%3C/svg%3E`},
+            { question: "大腸がんは、おじいちゃんおばあちゃんの病気。若い人は関係ない！", correctAnswer: "×", explanation: "そんなことない！最近は若い人でも増えてるから油断は禁物だよ。", illustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle' dominant-baseline='middle'%3E👨‍👩‍👧‍👦%3C/text%3E%3C/svg%3E`, explanationIllustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle'%3E🧑%3C/text%3E%3C/svg%3E`},
+            { question: "大腸カメラ（内視鏡）って、ものすごーく痛くて大変な検査だ！", correctAnswer: "×", explanation: "今は麻酔で楽に受けられる病院が多いんだ。CT検査もあるよ！", illustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle' dominant-baseline='middle'%3E😴%3C/text%3E%3C/svg%3E`, explanationIllustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle'%3E😌%3C/text%3E%3C/svg%3E`},
+            { question: "ポリープが見つかっても、全部ががんになるわけじゃないから、放っておいても平気！", correctAnswer: "×", explanation: "がんになるポリープもあるから、お医者さんの指示に従ってね。", illustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle' dominant-baseline='middle'%3E⚠️%3C/text%3E%3C/svg%3E`, explanationIllustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle'%3E👨‍⚕️%3C/text%3E%3C/svg%3E`},
+            { question: "家族にがんの人がいなきゃ、自分は遺伝的に安心だ！", correctAnswer: "×", explanation: "遺伝だけじゃない！食生活や運動不足も大きな原因になるんだ。", illustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle' dominant-baseline='middle'%3E🧬%3C/text%3E%3C/svg%3E`, explanationIllustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle'%3E🍔%3C/text%3E%3C/svg%3E`},
+            { question: "運動は、大腸がんの予防に効果がある。", correctAnswer: "○", explanation: "定期的な運動は、がんのリスクを下げることが知られているよ。日々の生活に運動を取り入れよう！", illustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle' dominant-baseline='middle'%3E🏃‍♂️%3C/text%3E%3C/svg%3E`, explanationIllustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle'%3E💪%3C/text%3E%3C/svg%3E`},
+            { question: "一回検査してOKだったら、もう一生検査しなくていい！", correctAnswer: "×", explanation: "体は変化するから、定期的なチェックが大切なんだよ。", illustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle' dominant-baseline='middle'%3E🗓️%3C/text%3E%3C/svg%3E`, explanationIllustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle'%3E🔄%3C/text%3E%3C/svg%3E`}
+        ];
+
+        const surveyData = [
+            { screen: 1, type: 'radio', id: 'A-1_age', question: 'あなたの年代を教えて！', options: [{t:'20代以下'}, {t:'30代'}, {t:'40代'}, {t:'50代'}, {t:'60代'}, {t:'70代以上'}], layout: 'grid-cols-3' },
+            { screen: 2, type: 'radio', id: 'A-2_gender', question: 'あなたの性別はどっちかな？', options: [{t:'男性',i:'♂️'}, {t:'女性',i:'♀️'}, {t:'その他',i:'🌈'}, {t:'回答しない',i:'🤫'}], layout: 'grid-cols-2' },
+            { screen: 3, type: 'radio', id: 'A-3_local_exam', question: '自治体や職場の検診（便潜血検査）、受けたことある？', options: [{t:'ある',i:'👍'}, {t:'ない',i:'❌'}, {t:'わからない',i:'🤔'}], layout: 'grid-cols-3' },
+            { screen: 4, type: 'radio', id: 'A-4_scope_exam', question: '病院で詳しい検査（大腸カメラ・大腸CT）をしたことありますか？', options: [{t:'ある',i:'👍'}, {t:'ない',i:'❌'}, {t:'わからない',i:'🤔'}], layout: 'grid-cols-3' },
+            { screen: 5, type: 'radio', id: 'A-5_family_history', question: '血のつながった家族に大腸がんの人、いる？', options: [{t:'いる',i:'👨‍👩‍👧‍👦'}, {t:'いない',i:'❌'}, {t:'わからない',i:'🤔'}], layout: 'grid-cols-3' },
+            { screen: 6, type: 'section_header', title: 'よし、後半戦！<br>あなたの考えを聞かせてね！' },
+            { screen: 7, type: 'likert', id: 'B-1-1_intention', question: '1年以内に大腸がん検診、受けてみたい？', options: [{ v: 1, l: '全く受けたくない' }, { v: 2, l: 'あまり受けたくない' }, { v: 3, l: 'どちらともいえない' }, { v: 4, l: 'できれば受けたい' }, { v: 5, l: 'ぜひ受けたい' }] },
+            { screen: 8, type: 'likert', id: 'B-2-1_risk', question: '将来、自分が大腸がんになる可能性、どう思う？', options: [{ v: 1, l: '高いと思う' }, { v: 2, l: 'やや高いと思う' }, { v: 3, l: '他の人と同じくらい' }, { v: 4, l: 'あまり高くない' }, { v: 5, l: 'ほとんどない' }] },
+            { screen: 9, type: 'likert', id: 'B-3-1_barrier_burden', question: '詳しい検査（大腸カメラ・大腸CT）って、痛かったり大変そう？', options: [{ v: 1, l: '非常にそう思う' }, { v: 2, l: 'ややそう思う' }, { v: 3, l: 'どちらともいえない' }, { v: 4, l: 'あまり思わない' }, { v: 5, l: '全く思わない' }] },
+            { screen: 10, type: 'likert', id: 'B-4-1_self_efficacy_prep', question: 'もしお医者さんに勧められたら、検査の準備、ちゃんとできそう？', options: [{ v: 1, l: '全く自信がない' }, { v: 2, l: 'あまり自信がない' }, { v: 3, l: 'どちらともいえない' }, { v: 4, l: 'たぶんできる' }, { v: 5, l: '絶対にできる' }] },
+            { screen: 11, type: 'consent', id: 'consent', title: '最後のお願い！', question: 'ご回答いただいた内容は、個人が特定されない統計情報として、今後の研究活動やサービス改善（商業利用を含む）のために活用させていただく場合がございます。<br><br>この点について、ご同意いただけますでしょうか？', options: [{t:'はい（同意する）',i:'🤝'}, {t:'いいえ（同意しない）',i:'❌'}], layout: 'grid-cols-2' },
+            { screen: 12, type: 'completion', title: 'アンケート完了！<br>協力ありがとう！', buttonText: '閉じる' }
+        ];
+        const totalScreens = surveyData.filter(s => s.type !== 'completion').length;
+
+        // --- ELEMENTS & STATE ---
+        const cardContainer = document.getElementById('card-container');
+        const modalContainer = document.getElementById('modal-container');
+        const progressBar = document.getElementById('progress-bar');
+        const pupuIcon = document.getElementById('pupu-progress-icon');
+        let currentQIndex = 0;
+        let currentScore = 0;
+        let userSelections = {};
+        let surveyAnswers = {};
+        let currentSurveyScreen = 0;
+
+        // --- SOUNDS ---
+        const correctSound = new Tone.Synth({ oscillator: { type: "sine" }, envelope: { attack: 0.005, decay: 0.1, sustain: 0.3, release: 1}, volume: -10 }).toDestination();
+        const wrongSound = new Tone.Synth({ oscillator: { type: "square" }, envelope: { attack: 0.01, decay: 0.2, sustain: 0.1, release: 0.2 }, volume: -15 }).toDestination();
+        const clickSound = new Tone.MembraneSynth({ pitchDecay: 0.01, octaves: 2, volume: -18 }).toDestination();
+        function playSound(type) {
+            if (Tone.context.state !== 'running') { Tone.context.resume(); }
+            if(type === 'correct') correctSound.triggerAttackRelease("G4", "16n");
+            else if(type === 'wrong') wrongSound.triggerAttackRelease("C3", "8n");
+            else clickSound.triggerAttackRelease("C4", "32n");
+        }
+        
+        // --- TEMPLATES & RENDERING ---
+        function renderCard(index) {
+            const q = quizData[index];
+            const cardHTML = `<div id="quiz-card-${index}" class="quiz-card absolute w-full h-full flex flex-col items-center justify-between"><div class="text-left w-full"><p class="text-sm font-bold text-indigo-500">もんだい ${index + 1}</p><h2 class="text-xl font-extrabold text-slate-700 mt-2">${q.question}</h2></div><img src="${q.illustration}" class="w-28 h-28 my-4"><div class="grid grid-cols-2 gap-4 w-full"><button class="btn-choice btn-o" data-value="○">○</button><button class="btn-choice btn-x" data-value="×">×</button></div></div>`;
+            cardContainer.innerHTML = cardHTML;
+            attachCardListeners(index);
+        }
+
+        function renderModal(content, addListeners = true) {
+            modalContainer.innerHTML = `<div class="modal-overlay"><div class="modal-content">${content}</div></div>`;
+            setTimeout(() => {
+                const overlay = modalContainer.querySelector('.modal-overlay');
+                if (overlay) overlay.classList.add('visible');
+            }, 10);
+            if(addListeners) attachModalListeners();
+        }
+
+        function closeModal() {
+            const overlay = modalContainer.querySelector('.modal-overlay');
+            if(overlay) {
+                overlay.classList.remove('visible');
+                setTimeout(() => { modalContainer.innerHTML = ''; }, 300);
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQIndex) / quizData.length) * 100;
+            progressBar.style.width = `${progress}%`;
+            pupuIcon.style.left = `${progress}%`;
+        }
+
+        const templates = {};
+        templates.linePrompt = `
+            <div style="background:white; border-radius:1.5rem; padding:2rem;">
+                <div class="text-center">
+                    <h2 class="text-xl font-bold text-green-600 mb-2">診断レポートの前に！</h2>
+                    <p class="text-slate-600 font-bold mb-6 text-sm">
+                        結果を見るには、LINEのお友達登録をお願いします！<br>役立つ健康情報もお届けします。
+                    </p>
+                    <div class="space-y-3">
+                        <button id="line-register-button" class="action-button w-full" style="background: linear-gradient(180deg, #4ade80, #22c55e); box-shadow-color: #15803d;">
+                            LINEで登録する
+                        </button>
+                    </div>
+                </div>
+            </div>`;
+
+        templates.lineThanks = `
+            <div style="background:white; border-radius:1.5rem; padding:2rem;">
+                <div class="text-center">
+                    <h2 class="text-xl font-bold text-green-600 mb-2">ありがとう！</h2>
+                    <p class="text-slate-600 font-bold mb-4">
+                        下のボタンで結果を確認してね。
+                    </p>
+                    <button id="show-results-button" class="action-button w-full">
+                        結果を見る
+                    </button>
+                </div>
+            </div>`;
+
+        templates.results = (score, selections, showSurveyButton = true) => {
+            const percentage = Math.round((score / quizData.length) * 100);
+            let resultEmoji = percentage >= 80 ? '🥳' : (percentage < 40 ? '😥' : '🤔');
+            const resultsHTML = quizData.map((item, i) => {
+                const isCorrect = selections[i] === item.correctAnswer;
+                return `<div class="p-4 rounded-2xl ${isCorrect ? 'bg-green-50' : 'bg-red-50'} border-2 ${isCorrect ? 'border-green-200' : 'border-red-200'}"><p class="font-bold text-slate-700 text-sm text-left">${item.question}</p><div class="grid grid-cols-2 gap-3 text-center my-3"><div class="p-2 rounded-xl bg-white/80"><p class="text-slate-500 font-bold text-xs">あなたの答え</p><p class="text-5xl font-extrabold ${isCorrect ? 'text-slate-700' : 'text-red-500'}">${selections[i]}</p></div><div class="p-2 rounded-xl bg-white/80"><p class="text-slate-500 font-bold text-xs">正解は...</p><p class="text-5xl font-extrabold text-amber-500">${item.correctAnswer}</p></div></div><div class="mt-2 text-left p-3 bg-white/50 rounded-xl flex items-center gap-3"><img src="${item.explanationIllustration}" class="w-12 h-12 flex-shrink-0"><p class="text-sm font-bold text-slate-600 flex-1">${item.explanation}</p></div></div>`;
+            }).join('');
+            
+            const buttonHTML = showSurveyButton 
+                ? `<div class="mt-6 text-center"><button id="start-survey-button" class="action-button text-xl w-full max-w-xs mx-auto blinking-next-button" style="background: linear-gradient(180deg, #4ade80, #22c55e); --shadow-color: #15803d; padding: 1rem 2rem;">次へ</button></div>`
+                : `<div class="mt-6 text-center"><button id="close-final-results-button" class="action-button text-xl w-full max-w-xs mx-auto" style="background: linear-gradient(180deg, #a78bfa, #8b5cf6); box-shadow-color: #6d28d9; padding: 1rem 2rem;">閉じる</button></div>`;
+
+            return `<div style="background:white; border-radius:1.5rem; padding:1rem;"><div class="w-full h-full flex flex-col p-2"><div class="text-center mb-2"><p class="text-6xl">${resultEmoji}</p><h2 class="text-lg font-bold text-slate-700">${percentage >= 80 ? 'すごい！知識カンペキ！' : (percentage >= 40 ? 'おしい！あともうちょっと！' : 'まだまだのびしろあり！')}</h2><p class="text-4xl font-extrabold text-amber-500">${score}<span class="text-xl">/${quizData.length}問正解</span></p></div><div class="space-y-3 overflow-y-auto flex-grow max-h-[50vh] p-1">${resultsHTML}</div>${buttonHTML}</div></div>`;
+        };
+
+        // --- EVENT LISTENERS ---
+        function attachCardListeners(index) { 
+            document.getElementById(`quiz-card-${index}`).querySelectorAll('.btn-choice').forEach(btn => btn.addEventListener('click', e => {
+                if (e.currentTarget.parentElement.parentElement.dataset.answered) return;
+                e.currentTarget.parentElement.parentElement.dataset.answered = 'true';
+                handleAnswer(index, e.target.dataset.value);
+            }));
+        }
+        
+        function attachModalListeners() {
+            const listeners = {
+                '#line-register-button': () => {
+                    playSound('click');
+                    window.open('https://line.me/R/ti/p/@667fzcbl', '_blank');
+                    renderModal(templates.lineThanks);
+                },
+                '#show-results-button': () => {
+                    playSound('click');
+                    renderModal(templates.results(currentScore, userSelections));
+                },
+                '#start-survey-button': () => {
+                    playSound('click');
+                    startSurvey();
+                },
+                '#close-final-results-button': () => {
+                    playSound('click');
+                    closeModal();
+                }
+            };
+            for (const selector in listeners) {
+                const el = document.querySelector(selector);
+                if (el) el.addEventListener('click', listeners[selector]);
+            }
+        }
+        
+        // --- CORE LOGIC ---
+        function handleAnswer(index, value) {
+            userSelections[index] = value;
+            if (value === quizData[index].correctAnswer) { playSound('correct'); currentScore++; } else { playSound('wrong'); }
+            const card = document.getElementById(`quiz-card-${index}`);
+            card.style.opacity = '0';
+            card.style.transform = 'scale(0.9)';
+            setTimeout(() => {
+                currentQIndex++; updateProgress();
+                if (currentQIndex < quizData.length) { renderCard(currentQIndex); } 
+                else {
+                    cardContainer.innerHTML = `<div class="quiz-card flex items-center justify-center text-center"><h2 class="text-2xl font-extrabold text-slate-700">おつかれさま！<br>診断レポートを作成するよ！</h2></div>`;
+                    setTimeout(() => {
+                         renderModal(templates.linePrompt);
+                    }, 800);
+                }
+            }, 300);
+        }
+
+        // --- SURVEY LOGIC ---
+        function startSurvey() {
+            currentSurveyScreen = 0;
+            surveyAnswers = {};
+            const modalContent = document.querySelector('.modal-content');
+            if (modalContent) {
+                 modalContent.innerHTML = `<div class="survey-container-wrapper" style="min-height:550px">
+                    <div id="survey-shell" class="survey-shell">
+                        <div id="survey-content-area" class="survey-content-area"></div>
+                    </div>
+                    <div id="pupu-guide-container">
+                        <img id="pupu-guide" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3Cfilter id='f1' x='-20%25' y='-20%25' width='140%25' height='140%25'%3E%3CfeDropShadow dx='2' dy='4' stdDeviation='3' flood-color='%23000' flood-opacity='0.15'/%3E%3C/filter%3E%3CradialGradient id='g1' cx='0.5' cy='1' r='1'%3E%3Cstop offset='0%25' stop-color='%23A1887F'/%3E%3Cstop offset='100%25' stop-color='%235D4037'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cg filter='url(%23f1)'%3E%3Cpath d='M50 95 C 20 95, 20 65, 50 65 C 80 65, 80 95, 50 95 Z' fill='url(%23g1)'/%3E%3Cpath d='M50 70 C 28 70, 28 45, 50 45 C 72 45, 72 70, 50 70 Z' fill='url(%23g1)'/%3E%3Cpath d='M50 50 C 38 50, 38 30, 50 30 C 62 30, 62 50, 50 50 Z' fill='url(%23g1)'/%3E%3Ccircle cx='38' cy='68' r='8' fill='white'/%3E%3Ccircle cx='62' cy='68' r='8' fill='white'/%3E%3Ccircle cx='39' cy='69' r='4.5' fill='black'/%3E%3Ccircle cx='61' cy='69' r='4.5' fill='black'/%3E%3Cpath d='M45 82 Q 50 88 55 82' stroke='white' stroke-width='3.5' fill='none' stroke-linecap='round'/%3E%3C/g%3E%3C/svg%3E" alt='ぷぷ博士'>
+                    </div>
+                </div>`;
+                renderSurveyScreen(0, true);
+            }
+        }
+
+        function renderSurveyScreen(index, isInitial = false) {
+            const screenData = surveyData[index];
+            const contentHTML = buildSurveyScreenHTML(screenData);
+            const surveyContentArea = document.getElementById('survey-content-area');
+            if(!surveyContentArea) return;
+            
+            const currentContentEl = surveyContentArea.querySelector('.survey-screen-content');
+            if (currentContentEl && !isInitial) {
+                currentContentEl.classList.add('content-out');
+                
+                setTimeout(() => {
+                    surveyContentArea.innerHTML = contentHTML;
+                    const newContentEl = surveyContentArea.querySelector('.survey-screen-content');
+                    newContentEl.classList.add('content-in');
+                    attachSurveyNavListeners();
+                }, 300);
+            } else {
+                surveyContentArea.innerHTML = contentHTML;
+                const newContentEl = surveyContentArea.querySelector('.survey-screen-content');
+                if(newContentEl) newContentEl.classList.add('content-in');
+                attachSurveyNavListeners();
+            }
+        }
+        
+        function buildSurveyScreenHTML(screenData) {
+            let optionsHTML = '';
+            const isQuestion = ['radio', 'likert', 'consent'].includes(screenData.type);
+            const savedAnswer = surveyAnswers[screenData.id];
+
+            if (screenData.type === 'radio' || screenData.type === 'consent') {
+                optionsHTML = `<div class="grid ${screenData.layout || 'grid-cols-1'} gap-4 mt-4">${screenData.options.map((opt, i) => `<div style="animation-delay: ${i * 70 + 150}ms"><input type="radio" name="${screenData.id}" value="${opt.t}" class="survey-option-input hidden" id="opt-${screenData.id}-${i}" ${savedAnswer === opt.t ? 'checked' : ''}><label for="opt-${screenData.id}-${i}" class="survey-option-label">${opt.i ? `<span class="icon">${opt.i}</span>` : ''}<span>${opt.t}</span></label></div>`).join('')}</div>`;
+            } else if (screenData.type === 'likert') {
+                const faces = ['😥', '😟', '�', '🙂', '😄'];
+                const leftAnnotationLabel = screenData.options.find(o => o.v === 1).l;
+                const rightAnnotationLabel = screenData.options.find(o => o.v === 5).l;
+                const middleAnnotationLabel = screenData.options.find(o => o.v === 3).l;
+
+                optionsHTML = `
+                    <div class="likert-horizontal-container">
+                        <div class="likert-emoji-bar">
+                            ${[1, 2, 3, 4, 5].map((v) => `
+                                <div>
+                                    <input type="radio" name="${screenData.id}" value="${v}" class="likert-emoji-input hidden" id="opt-${screenData.id}-${v}" ${savedAnswer == v ? 'checked' : ''}>
+                                    <label for="opt-${screenData.id}-${v}" class="likert-emoji-label">${faces[v-1]}</label>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="likert-annotation-bar">
+                            <span>${leftAnnotationLabel}</span>
+                            <span>${middleAnnotationLabel}</span>
+                            <span>${rightAnnotationLabel}</span>
+                        </div>
+                    </div>`;
+            }
+
+            let navigationHTML = '';
+            if (screenData.type === 'completion') {
+                navigationHTML = `<button id="survey-close-button" class="w-full survey-nav-button mt-6">${screenData.buttonText}</button>`;
+            } else if (screenData.type === 'section_header') {
+                 navigationHTML = `<div class="h-16 mt-6"></div>`; // Placeholder for auto-advance
+            } else if (currentSurveyScreen > 0) {
+                 navigationHTML = `<div class="flex justify-center mt-6"><button id="survey-back-button" class="survey-nav-button survey-back-button w-1/2">戻る</button></div>`;
+            } else {
+                 navigationHTML = `<div class="h-16 mt-6"></div>`; // Placeholder
+            }
+            
+            const progress = ((screenData.screen || 0) / totalScreens) * 100;
+
+            return `
+                <div class="survey-screen-content">
+                    <div class="mb-4">
+                        <p class="text-right text-sm font-bold text-indigo-400 mb-1">しつもん ${screenData.screen || ''} / ${totalScreens}</p>
+                        <div class="survey-progress-bar-container"><div style="width: ${progress}%" class="survey-progress-bar"></div></div>
+                    </div>
+                    <div class="flex-grow flex flex-col justify-center text-center">
+                        <h2 class="text-2xl font-extrabold text-slate-800 mb-2">${screenData.title || screenData.question}</h2>
+                        ${(screenData.type === 'consent' && screenData.question) ? `<p class="text-sm text-slate-600 text-left">${screenData.question}</p>` : ''}
+                        ${optionsHTML}
+                    </div>
+                    <div class="mt-4">${navigationHTML}</div>
+                </div>`;
+        }
+        
+        function attachSurveyNavListeners() {
+            const backBtn = document.getElementById('survey-back-button');
+            const closeBtn = document.getElementById('survey-close-button');
+
+            const screenData = surveyData[currentSurveyScreen];
+            const isQuestion = ['radio', 'likert', 'consent'].includes(screenData.type);
+            
+            if(isQuestion) {
+                 document.querySelectorAll(`input[name="${screenData.id}"]`).forEach(input => {
+                     input.addEventListener('change', (e) => {
+                        const allInputs = document.querySelectorAll(`input[name="${screenData.id}"]`);
+                        allInputs.forEach(i => i.disabled = true);
+                        playSound('click');
+                        setTimeout(() => handleSurveyNav('next'), 500);
+                     });
+                 });
+            } else if (screenData.type === 'section_header') {
+                setTimeout(() => handleSurveyNav('next'), 1500);
+            }
+
+            if(backBtn) backBtn.addEventListener('click', () => { playSound('click'); handleSurveyNav('back'); });
+            if(closeBtn) closeBtn.addEventListener('click', () => { 
+                playSound('click'); 
+                const pupuGuide = document.getElementById('pupu-guide-container');
+                if(pupuGuide) pupuGuide.style.transform = 'translateY(200px)';
+                renderModal(templates.results(currentScore, userSelections, false));
+            });
+        }
+        
+        function handleSurveyNav(direction) {
+            const surveyContentArea = document.getElementById('survey-content-area');
+            if (!surveyContentArea) return;
+            surveyContentArea.dataset.direction = direction;
+            const screenData = surveyData[currentSurveyScreen];
+            const isQuestion = ['radio', 'likert', 'consent'].includes(screenData.type);
+
+            if (direction === 'next') {
+                if (isQuestion) {
+                    const selected = document.querySelector(`input[name="${screenData.id}"]:checked`);
+                    if (selected) surveyAnswers[screenData.id] = selected.value;
+                }
+                currentSurveyScreen++;
+            } else { // back
+                currentSurveyScreen--;
+            }
+            renderSurveyScreen(currentSurveyScreen);
+        }
+        
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+             updateProgress();
+             renderCard(0);
+        });
+    </script>
+</body>
+</html>
+�
