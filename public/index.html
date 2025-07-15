@@ -6,6 +6,7 @@
     <title>Dr.ぷぷのけんこう研究所</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800&display=swap" rel="stylesheet">
@@ -456,7 +457,7 @@
             if (screenData.type === 'radio' || screenData.type === 'consent') {
                 optionsHTML = `<div class="grid ${screenData.layout || 'grid-cols-1'} gap-4 mt-4">${screenData.options.map((opt, i) => `<div style="animation-delay: ${i * 70 + 150}ms"><input type="radio" name="${screenData.id}" value="${opt.t}" class="survey-option-input hidden" id="opt-${screenData.id}-${i}" ${savedAnswer === opt.t ? 'checked' : ''}><label for="opt-${screenData.id}-${i}" class="survey-option-label">${opt.i ? `<span class="icon">${opt.i}</span>` : ''}<span>${opt.t}</span></label></div>`).join('')}</div>`;
             } else if (screenData.type === 'likert') {
-                const faces = ['😥', '😟', '�', '🙂', '😄'];
+                const faces = ['😥', '😟', '😐', '🙂', '😄'];
                 const leftAnnotationLabel = screenData.options.find(o => o.v === 1).l;
                 const rightAnnotationLabel = screenData.options.find(o => o.v === 5).l;
                 const middleAnnotationLabel = screenData.options.find(o => o.v === 3).l;
@@ -556,11 +557,15 @@
         }
         
         // --- INITIALIZATION ---
-        document.addEventListener('DOMContentLoaded', () => {
-             updateProgress();
-             renderCard(0);
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                await liff.init({ liffId: "2007757059-nepa16EO" });
+            } catch (e) {
+                console.error("LIFF initialization failed", e);
+            }
+            updateProgress();
+            renderCard(0);
         });
     </script>
 </body>
 </html>
-�
