@@ -136,9 +136,10 @@
     
     <script>
         // --- CONFIGURATION ---
-        const LIFF_ID = "ここにあなたのLIFF IDを貼り付け";
-        const SERVER_URL = "https://あなたのサーバーURL.onrender.com";
-        const LINE_ACCOUNT_URL = "https://line.me/R/ti/p/@あなたのLINE公式アカウントID";
+        const LIFF_ID = "2007757059-nepa16EO";
+        const LINE_ACCOUNT_URL = "https://lin.ee/NmU3RyA";
+        // ★★★ お客様からご提供いただいたGAS WebアプリのURLに更新しました ★★★
+        const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxl_0SlDxKRF_4QmAEUQnnoykDKxECCqgbmhAzglSHOHJlEEBs4M2mRneQ60COzn5ns/exec";
 
         const quizData = [
             { question: "大腸がんの初期には、必ずお腹の痛みや血便などの自覚症状がある。", correctAnswer: "×", explanation: "初期は症状がないことが多いんだ。だから検診が大事！", illustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle' dominant-baseline='middle'%3E🤫%3C/text%3E%3C/svg%3E`, explanationIllustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle'%3E👻%3C/text%3E%3C/svg%3E`},
@@ -319,7 +320,7 @@
         }
 
         // --- DATA SAVING LOGIC ---
-        async function submitSurveyData() {
+        async function submitSurveyDataToGAS() {
             renderModal(`
                 <div style="background:white; border-radius:1.5rem; padding:2rem; text-align:center;">
                     <h2 class="text-xl font-bold text-indigo-600 mb-2">回答を保存中...</h2>
@@ -352,22 +353,30 @@
                     surveyData: surveyAnswers
                 };
 
-                statusElement.textContent = 'サーバーに回答を送信しています...';
-                const response = await fetch(`${SERVER_URL}/submit-survey`, {
+                statusElement.textContent = 'スプレッドシートに回答を送信しています...';
+                
+                // ★★★ 送信先をGASに変更 ★★★
+                const response = await fetch(GAS_WEB_APP_URL, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload),
+                    // CORSエラーを回避するため、Content-Typeをtext/plainとして送信
+                    headers: {
+                        'Content-Type': 'text/plain;charset=utf-8',
+                    },
+                    body: JSON.stringify(payload)
                 });
 
-                if (!response.ok) {
-                    throw new Error('サーバーへの保存に失敗しました。');
+                // GASからの応答をJSONとして解析
+                const result = await response.json();
+
+                if (result.result !== 'success') {
+                    throw new Error(result.message || 'スプレッドシートへの保存に失敗しました。');
                 }
                 
                 // 完了後は、アンケートボタンのない最終結果を表示
                 renderModal(templates.results(currentScore, userSelections, false));
 
             } catch (error) {
-                console.error(error);
+                console.error("GASへの送信エラー:", error);
                 renderModal(`
                     <div style="background:white; border-radius:1.5rem; padding:2rem; text-align:center;">
                         <h2 class="text-xl font-bold text-red-600 mb-2">保存エラー</h2>
@@ -507,7 +516,7 @@
             if(backBtn) backBtn.addEventListener('click', () => { playSound('click'); handleSurveyNav('back'); });
             if(completeBtn) completeBtn.addEventListener('click', () => { 
                 playSound('click'); 
-                submitSurveyData();
+                submitSurveyDataToGAS();
             });
         }
         
@@ -539,4 +548,4 @@
         });
     </script>
 </body>
-</ht
+</html>
