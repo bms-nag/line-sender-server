@@ -136,8 +136,9 @@
     
     <script>
         // --- CONFIGURATION ---
-        const LIFF_ID = "2007757059-nepa16EO";
-        const SERVER_URL = "https://line-sender-server.onrender.com";
+        const LIFF_ID = "ここにあなたのLIFF IDを貼り付け";
+        const SERVER_URL = "https://あなたのサーバーURL.onrender.com";
+        const LINE_ACCOUNT_URL = "https://line.me/R/ti/p/@あなたのLINE公式アカウントID";
 
         const quizData = [
             { question: "大腸がんの初期には、必ずお腹の痛みや血便などの自覚症状がある。", correctAnswer: "×", explanation: "初期は症状がないことが多いんだ。だから検診が大事！", illustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle' dominant-baseline='middle'%3E🤫%3C/text%3E%3C/svg%3E`, explanationIllustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle'%3E👻%3C/text%3E%3C/svg%3E`},
@@ -150,7 +151,18 @@
             { question: "一回検査してOKだったら、もう一生検査しなくていい！", correctAnswer: "×", explanation: "体は変化するから、定期的なチェックが大切なんだよ。", illustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle' dominant-baseline='middle'%3E🗓️%3C/text%3E%3C/svg%3E`, explanationIllustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle'%3E🔄%3C/text%3E%3C/svg%3E`}
         ];
         const surveyData = [
-             // Survey data remains the same
+            { screen: 1, type: 'radio', id: 'A-1_age', question: 'あなたの年代を教えて！', options: [{t:'20代以下'}, {t:'30代'}, {t:'40代'}, {t:'50代'}, {t:'60代'}, {t:'70代以上'}], layout: 'grid-cols-3' },
+            { screen: 2, type: 'radio', id: 'A-2_gender', question: 'あなたの性別はどっちかな？', options: [{t:'男性',i:'♂️'}, {t:'女性',i:'♀️'}, {t:'その他',i:'🌈'}, {t:'回答しない',i:'🤫'}], layout: 'grid-cols-2' },
+            { screen: 3, type: 'radio', id: 'A-3_local_exam', question: '自治体や職場の検診（便潜血検査）、受けたことある？', options: [{t:'ある',i:'👍'}, {t:'ない',i:'❌'}, {t:'わからない',i:'🤔'}], layout: 'grid-cols-3' },
+            { screen: 4, type: 'radio', id: 'A-4_scope_exam', question: '病院で詳しい検査（大腸カメラ・大腸CT）をしたことありますか？', options: [{t:'ある',i:'👍'}, {t:'ない',i:'❌'}, {t:'わからない',i:'🤔'}], layout: 'grid-cols-3' },
+            { screen: 5, type: 'radio', id: 'A-5_family_history', question: '血のつながった家族に大腸がんの人、いる？', options: [{t:'いる',i:'👨‍👩‍👧‍👦'}, {t:'いない',i:'❌'}, {t:'わからない',i:'🤔'}], layout: 'grid-cols-3' },
+            { screen: 6, type: 'section_header', title: 'よし、後半戦！<br>あなたの考えを聞かせてね！' },
+            { screen: 7, type: 'likert', id: 'B-1-1_intention', question: '1年以内に大腸がん検診、受けてみたい？', options: [{ v: 1, l: '全く受けたくない' }, { v: 2, l: 'あまり受けたくない' }, { v: 3, l: 'どちらともいえない' }, { v: 4, l: 'できれば受けたい' }, { v: 5, l: 'ぜひ受けたい' }] },
+            { screen: 8, type: 'likert', id: 'B-2-1_risk', question: '将来、自分が大腸がんになる可能性、どう思う？', options: [{ v: 1, l: '高いと思う' }, { v: 2, l: 'やや高いと思う' }, { v: 3, l: '他の人と同じくらい' }, { v: 4, l: 'あまり高くない' }, { v: 5, l: 'ほとんどない' }] },
+            { screen: 9, type: 'likert', id: 'B-3-1_barrier_burden', question: '詳しい検査（大腸カメラ・大腸CT）って、痛かったり大変そう？', options: [{ v: 1, l: '非常にそう思う' }, { v: 2, l: 'ややそう思う' }, { v: 3, l: 'どちらともいえない' }, { v: 4, l: 'あまり思わない' }, { v: 5, l: '全く思わない' }] },
+            { screen: 10, type: 'likert', id: 'B-4-1_self_efficacy_prep', question: 'もしお医者さんに勧められたら、検査の準備、ちゃんとできそう？', options: [{ v: 1, l: '全く自信がない' }, { v: 2, l: 'あまり自信がない' }, { v: 3, l: 'どちらともいえない' }, { v: 4, l: 'たぶんできる' }, { v: 5, l: '絶対にできる' }] },
+            { screen: 11, type: 'consent', id: 'consent', title: '最後のお願い！', question: 'ご回答いただいた内容は、個人が特定されない統計情報として、今後の研究活動やサービス改善（商業利用を含む）のために活用させていただく場合がございます。<br><br>この点について、ご同意いただけますでしょうか？', options: [{t:'はい（同意する）',i:'🤝'}, {t:'いいえ（同意しない）',i:'❌'}], layout: 'grid-cols-2' },
+            { screen: 12, type: 'completion', title: 'アンケート完了！<br>協力ありがとう！', buttonText: '回答を保存して結果を見る' }
         ];
         const totalScreens = surveyData.filter(s => s.type !== 'completion').length;
 
@@ -208,27 +220,28 @@
         }
 
         const templates = {};
-        
-        // NEW: Modal to prompt user to send result to LINE
+
         templates.linePrompt = `
             <div style="background:white; border-radius:1.5rem; padding:2rem;">
                 <div class="text-center">
-                    <h2 class="text-xl font-bold text-green-600 mb-2">レポートの準備ができたよ！</h2>
+                    <h2 class="text-xl font-bold text-green-600 mb-2">診断レポートの前に！</h2>
                     <p class="text-slate-600 font-bold mb-6 text-sm">
-                        下のボタンを押して、結果をLINEで受け取ろう！
+                        結果を見るには、LINEのお友達登録をお願いします！<br>役立つ健康情報もお届けします。
                     </p>
-                    <button id="send-to-line-button" class="action-button w-full" style="background: linear-gradient(180deg, #4ade80, #22c55e); box-shadow-color: #15803d;">
-                        LINEで結果を受け取る
-                    </button>
+                    <div class="space-y-3">
+                        <button id="line-register-button" class="action-button w-full" style="background: linear-gradient(180deg, #4ade80, #22c55e); box-shadow-color: #15803d;">
+                            LINEで登録する
+                        </button>
+                    </div>
                 </div>
             </div>`;
 
-        templates.lineSuccess = `
+        templates.lineThanks = `
             <div style="background:white; border-radius:1.5rem; padding:2rem;">
                 <div class="text-center">
-                    <h2 class="text-xl font-bold text-green-600 mb-2">LINEに送信しました！</h2>
+                    <h2 class="text-xl font-bold text-green-600 mb-2">ありがとう！</h2>
                     <p class="text-slate-600 font-bold mb-4">
-                        下のボタンで詳しい結果を確認してね。
+                        下のボタンで結果を確認してね。
                     </p>
                     <button id="show-results-button" class="action-button w-full">
                         結果を見る
@@ -245,7 +258,7 @@
             }).join('');
             
             const buttonHTML = showSurveyButton 
-                ? `<div class="mt-6 text-center"><button id="start-survey-button" class="action-button text-xl w-full max-w-xs mx-auto blinking-next-button" style="background: linear-gradient(180deg, #4ade80, #22c55e); --shadow-color: #15803d; padding: 1rem 2rem;">次へ</button></div>`
+                ? `<div class="mt-6 text-center"><button id="start-survey-button" class="action-button text-xl w-full max-w-xs mx-auto blinking-next-button" style="background: linear-gradient(180deg, #4ade80, #22c55e); --shadow-color: #15803d; padding: 1rem 2rem;">アンケートに協力する</button></div>`
                 : `<div class="mt-6 text-center"><button id="close-final-results-button" class="action-button text-xl w-full max-w-xs mx-auto" style="background: linear-gradient(180deg, #a78bfa, #8b5cf6); box-shadow-color: #6d28d9; padding: 1rem 2rem;">閉じる</button></div>`;
 
             return `<div style="background:white; border-radius:1.5rem; padding:1rem;"><div class="w-full h-full flex flex-col p-2"><div class="text-center mb-2"><p class="text-6xl">${resultEmoji}</p><h2 class="text-lg font-bold text-slate-700">${percentage >= 80 ? 'すごい！知識カンペキ！' : (percentage >= 40 ? 'おしい！あともうちょっと！' : 'まだまだのびしろあり！')}</h2><p class="text-4xl font-extrabold text-amber-500">${score}<span class="text-xl">/${quizData.length}問正解</span></p></div><div class="space-y-3 overflow-y-auto flex-grow max-h-[50vh] p-1">${resultsHTML}</div>${buttonHTML}</div></div>`;
@@ -262,14 +275,14 @@
         
         function attachModalListeners() {
             const listeners = {
-                // NEW: Listener for the new prompt button
-                '#send-to-line-button': () => {
+                '#line-register-button': () => {
                     playSound('click');
-                    sendResultToLine();
+                    window.open(LINE_ACCOUNT_URL, '_blank');
+                    renderModal(templates.lineThanks);
                 },
                 '#show-results-button': () => {
                     playSound('click');
-                    renderModal(templates.results(currentScore, userSelections));
+                    renderModal(templates.results(currentScore, userSelections, true));
                 },
                 '#start-survey-button': () => {
                     playSound('click');
@@ -297,112 +310,107 @@
                 currentQIndex++; updateProgress();
                 if (currentQIndex < quizData.length) { renderCard(currentQIndex); } 
                 else {
-                    cardContainer.innerHTML = `<div class="quiz-card flex items-center justify-center text-center"><h2 class="text-2xl font-extrabold text-slate-700">おつかれさま！</h2></div>`;
+                    cardContainer.innerHTML = `<div class="quiz-card flex items-center justify-center text-center"><h2 class="text-2xl font-extrabold text-slate-700">おつかれさま！<br>診断レポートを作成するよ！</h2></div>`;
                     setTimeout(() => {
-                         // UPDATED: Show the prompt modal instead of sending directly
                          renderModal(templates.linePrompt);
                     }, 800);
                 }
             }, 300);
         }
 
-        // --- UPDATED!! LINE SENDING LOGIC ---
-        async function sendResultToLine() {
-            // Show a "sending" modal
+        // --- DATA SAVING LOGIC ---
+        async function submitSurveyData() {
             renderModal(`
                 <div style="background:white; border-radius:1.5rem; padding:2rem; text-align:center;">
-                    <h2 class="text-xl font-bold text-green-600 mb-2">LINE送信準備中...</h2>
-                    <p id="line-status" class="text-slate-600 font-bold mb-4">
-                        LINEと通信しています...
+                    <h2 class="text-xl font-bold text-indigo-600 mb-2">回答を保存中...</h2>
+                    <p id="save-status" class="text-slate-600 font-bold mb-4">
+                        LINEにあなたのIDを確認しています...
                     </p>
                     <div class="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-indigo-500 mx-auto"></div>
                 </div>
-            `, false); 
+            `, false);
 
-            const statusElement = document.getElementById('line-status');
+            const statusElement = document.getElementById('save-status');
 
             try {
-                // 1. Initialize LIFF
-                if (!LIFF_ID || LIFF_ID.includes("貼り付け")) {
-                    throw new Error('LIFF IDが設定されていません。コードを編集してください。');
-                }
                 statusElement.textContent = 'LIFFを初期化しています...';
                 await liff.init({ liffId: LIFF_ID });
 
-                // 2. Check if user is logged in
                 if (!liff.isLoggedIn()) {
-                    statusElement.textContent = 'LINEにログインしてください...';
+                    statusElement.textContent = '結果を保存するにはLINEログインが必要です。';
                     liff.login({ redirectUri: window.location.href }); 
                     return; 
                 }
 
-                // 3. Get user profile (and user ID)
                 statusElement.textContent = 'ユーザー情報を取得しています...';
                 const profile = await liff.getProfile();
                 const userId = profile.userId;
 
-                // 4. Create the message text
-                const percentage = Math.round((currentScore / quizData.length) * 100);
-                let resultTitle = percentage >= 80 ? 'すごい！知識カンペキ！' : (percentage >= 40 ? 'おしい！あともうちょっと！' : 'まだまだのびしろあり！');
-                const resultText = `Dr.ぷぷのけんこう研究所より\n\nあなたの知識レベルは...\n【${resultTitle}】でした！\n\n正解数: ${currentScore} / ${quizData.length}問\n正答率: ${percentage}%\n\n詳しい解説は、結果ページで確認してくださいね！`;
+                const payload = {
+                    userId: userId,
+                    quizScore: currentScore,
+                    surveyData: surveyAnswers
+                };
 
-                // 5. Send data to the server
-                statusElement.textContent = '診断結果をLINEに送信しています...';
-                // UPDATED: Use the full server URL
-                const response = await fetch(`${SERVER_URL}/send-message`, {
+                statusElement.textContent = 'サーバーに回答を送信しています...';
+                const response = await fetch(`${SERVER_URL}/submit-survey`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId: userId, resultText: resultText }),
+                    body: JSON.stringify(payload),
                 });
 
                 if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || 'サーバーでの送信に失敗しました。');
+                    throw new Error('サーバーへの保存に失敗しました。');
                 }
                 
-                // 6. Show success message
-                statusElement.textContent = '送信完了！';
-                renderModal(templates.lineSuccess);
+                // 完了後は、アンケートボタンのない最終結果を表示
+                renderModal(templates.results(currentScore, userSelections, false));
 
             } catch (error) {
                 console.error(error);
-                // Show error modal
                 renderModal(`
                     <div style="background:white; border-radius:1.5rem; padding:2rem; text-align:center;">
-                        <h2 class="text-xl font-bold text-red-600 mb-2">送信エラー</h2>
+                        <h2 class="text-xl font-bold text-red-600 mb-2">保存エラー</h2>
                         <p class="text-slate-600 font-bold mb-4">
-                            LINEへの送信中にエラーが発生しました。<br>時間をおいて再度お試しください。
+                            回答の保存中にエラーが発生しました。<br>時間をおいて再度お試しください。
                         </p>
                         <p class="text-xs text-slate-500 mb-4">${error.message}</p>
                         <button id="show-results-anyway-button" class="action-button">結果だけ見る</button>
                     </div>
                 `);
-                // Add listener to the "show results anyway" button
                 document.getElementById('show-results-anyway-button').addEventListener('click', () => {
                     playSound('click');
-                    renderModal(templates.results(currentScore, userSelections));
+                    renderModal(templates.results(currentScore, userSelections, false));
                 });
             }
         }
 
-        // --- SURVEY LOGIC (No changes) ---
+        // --- SURVEY LOGIC ---
         function startSurvey() {
-            currentSurveyScreen = 0;
-            surveyAnswers = {};
-            const modalContent = document.querySelector('.modal-content');
-            if (modalContent) {
-                 modalContent.innerHTML = `<div class="survey-container-wrapper" style="min-height:550px"><div id="survey-shell" class="survey-shell"><div id="survey-content-area" class="survey-content-area"></div></div><div id="pupu-guide-container"><img id="pupu-guide" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3Cfilter id='f1' x='-20%25' y='-20%25' width='140%25' height='140%25'%3E%3CfeDropShadow dx='2' dy='4' stdDeviation='3' flood-color='%23000' flood-opacity='0.15'/%3E%3C/filter%3E%3CradialGradient id='g1' cx='0.5' cy='1' r='1'%3E%3Cstop offset='0%25' stop-color='%23A1887F'/%3E%3Cstop offset='100%25' stop-color='%235D4037'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cg filter='url(%23f1)'%3E%3Cpath d='M50 95 C 20 95, 20 65, 50 65 C 80 65, 80 95, 50 95 Z' fill='url(%23g1)'/%3E%3Cpath d='M50 70 C 28 70, 28 45, 50 45 C 72 45, 72 70, 50 70 Z' fill='url(%23g1)'/%3E%3Cpath d='M50 50 C 38 50, 38 30, 50 30 C 62 30, 62 50, 50 50 Z' fill='url(%23g1)'/%3E%3Ccircle cx='38' cy='68' r='8' fill='white'/%3E%3Ccircle cx='62' cy='68' r='8' fill='white'/%3E%3Ccircle cx='39' cy='69' r='4.5' fill='black'/%3E%3Ccircle cx='61' cy='69' r='4.5' fill='black'/%3E%3Cpath d='M45 82 Q 50 88 55 82' stroke='white' stroke-width='3.5' fill='none' stroke-linecap='round'/%3E%3C/g%3E%3C/svg%3E" alt='ぷぷ博士'></div></div>`;
+            closeModal();
+            setTimeout(() => {
+                cardContainer.innerHTML = `<div class="survey-container-wrapper" style="min-height:550px">
+                    <div id="survey-shell" class="survey-shell">
+                        <div id="survey-content-area" class="survey-content-area"></div>
+                    </div>
+                    <div id="pupu-guide-container">
+                        <img id="pupu-guide" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3Cfilter id='f1' x='-20%25' y='-20%25' width='140%25' height='140%25'%3E%3CfeDropShadow dx='2' dy='4' stdDeviation='3' flood-color='%23000' flood-opacity='0.15'/%3E%3C/filter%3E%3CradialGradient id='g1' cx='0.5' cy='1' r='1'%3E%3Cstop offset='0%25' stop-color='%23A1887F'/%3E%3Cstop offset='100%25' stop-color='%235D4037'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cg filter='url(%23f1)'%3E%3Cpath d='M50 95 C 20 95, 20 65, 50 65 C 80 65, 80 95, 50 95 Z' fill='url(%23g1)'/%3E%3Cpath d='M50 70 C 28 70, 28 45, 50 45 C 72 45, 72 70, 50 70 Z' fill='url(%23g1)'/%3E%3Cpath d='M50 50 C 38 50, 38 30, 50 30 C 62 30, 62 50, 50 50 Z' fill='url(%23g1)'/%3E%3Ccircle cx='38' cy='68' r='8' fill='white'/%3E%3Ccircle cx='62' cy='68' r='8' fill='white'/%3E%3Ccircle cx='39' cy='69' r='4.5' fill='black'/%3E%3Ccircle cx='61' cy='69' r='4.5' fill='black'/%3E%3Cpath d='M45 82 Q 50 88 55 82' stroke='white' stroke-width='3.5' fill='none' stroke-linecap='round'/%3E%3C/g%3E%3C/svg%3E" alt='ぷぷ博士'>
+                    </div>
+                </div>`;
                 renderSurveyScreen(0, true);
-            }
+            }, 300);
         }
+
         function renderSurveyScreen(index, isInitial = false) {
             const screenData = surveyData[index];
             const contentHTML = buildSurveyScreenHTML(screenData);
             const surveyContentArea = document.getElementById('survey-content-area');
             if(!surveyContentArea) return;
+            
             const currentContentEl = surveyContentArea.querySelector('.survey-screen-content');
             if (currentContentEl && !isInitial) {
                 currentContentEl.classList.add('content-out');
+                
                 setTimeout(() => {
                     surveyContentArea.innerHTML = contentHTML;
                     const newContentEl = surveyContentArea.querySelector('.survey-screen-content');
@@ -416,37 +424,73 @@
                 attachSurveyNavListeners();
             }
         }
+        
         function buildSurveyScreenHTML(screenData) {
             let optionsHTML = '';
             const isQuestion = ['radio', 'likert', 'consent'].includes(screenData.type);
             const savedAnswer = surveyAnswers[screenData.id];
+
             if (screenData.type === 'radio' || screenData.type === 'consent') {
                 optionsHTML = `<div class="grid ${screenData.layout || 'grid-cols-1'} gap-4 mt-4">${screenData.options.map((opt, i) => `<div style="animation-delay: ${i * 70 + 150}ms"><input type="radio" name="${screenData.id}" value="${opt.t}" class="survey-option-input hidden" id="opt-${screenData.id}-${i}" ${savedAnswer === opt.t ? 'checked' : ''}><label for="opt-${screenData.id}-${i}" class="survey-option-label">${opt.i ? `<span class="icon">${opt.i}</span>` : ''}<span>${opt.t}</span></label></div>`).join('')}</div>`;
             } else if (screenData.type === 'likert') {
-                const faces = ['😥', '�', '😐', '🙂', '😄'];
+                const faces = ['😥', '😟', '😐', '🙂', '😄'];
                 const leftAnnotationLabel = screenData.options.find(o => o.v === 1).l;
                 const rightAnnotationLabel = screenData.options.find(o => o.v === 5).l;
                 const middleAnnotationLabel = screenData.options.find(o => o.v === 3).l;
-                optionsHTML = `<div class="likert-horizontal-container"><div class="likert-emoji-bar">${[1, 2, 3, 4, 5].map((v) => `<div><input type="radio" name="${screenData.id}" value="${v}" class="likert-emoji-input hidden" id="opt-${screenData.id}-${v}" ${savedAnswer == v ? 'checked' : ''}><label for="opt-${screenData.id}-${v}" class="likert-emoji-label">${faces[v-1]}</label></div>`).join('')}</div><div class="likert-annotation-bar"><span>${leftAnnotationLabel}</span><span>${middleAnnotationLabel}</span><span>${rightAnnotationLabel}</span></div></div>`;
+
+                optionsHTML = `
+                    <div class="likert-horizontal-container">
+                        <div class="likert-emoji-bar">
+                            ${[1, 2, 3, 4, 5].map((v) => `
+                                <div>
+                                    <input type="radio" name="${screenData.id}" value="${v}" class="likert-emoji-input hidden" id="opt-${screenData.id}-${v}" ${savedAnswer == v ? 'checked' : ''}>
+                                    <label for="opt-${screenData.id}-${v}" class="likert-emoji-label">${faces[v-1]}</label>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="likert-annotation-bar">
+                            <span>${leftAnnotationLabel}</span>
+                            <span>${middleAnnotationLabel}</span>
+                            <span>${rightAnnotationLabel}</span>
+                        </div>
+                    </div>`;
             }
+
             let navigationHTML = '';
             if (screenData.type === 'completion') {
-                navigationHTML = `<button id="survey-close-button" class="w-full survey-nav-button mt-6">${screenData.buttonText}</button>`;
+                navigationHTML = `<button id="survey-complete-button" class="w-full survey-nav-button mt-6">${screenData.buttonText}</button>`;
             } else if (screenData.type === 'section_header') {
-                 navigationHTML = `<div class="h-16 mt-6"></div>`;
+                 navigationHTML = `<div class="h-16 mt-6"></div>`; // Placeholder for auto-advance
             } else if (currentSurveyScreen > 0) {
                  navigationHTML = `<div class="flex justify-center mt-6"><button id="survey-back-button" class="survey-nav-button survey-back-button w-1/2">戻る</button></div>`;
             } else {
-                 navigationHTML = `<div class="h-16 mt-6"></div>`;
+                 navigationHTML = `<div class="h-16 mt-6"></div>`; // Placeholder
             }
+            
             const progress = ((screenData.screen || 0) / totalScreens) * 100;
-            return `<div class="survey-screen-content"><div class="mb-4"><p class="text-right text-sm font-bold text-indigo-400 mb-1">しつもん ${screenData.screen || ''} / ${totalScreens}</p><div class="survey-progress-bar-container"><div style="width: ${progress}%" class="survey-progress-bar"></div></div></div><div class="flex-grow flex flex-col justify-center text-center"><h2 class="text-2xl font-extrabold text-slate-800 mb-2">${screenData.title || screenData.question}</h2>${(screenData.type === 'consent' && screenData.question) ? `<p class="text-sm text-slate-600 text-left">${screenData.question}</p>` : ''}${optionsHTML}</div><div class="mt-4">${navigationHTML}</div></div>`;
+
+            return `
+                <div class="survey-screen-content">
+                    <div class="mb-4">
+                        <p class="text-right text-sm font-bold text-indigo-400 mb-1">しつもん ${screenData.screen || ''} / ${totalScreens}</p>
+                        <div class="survey-progress-bar-container"><div style="width: ${progress}%" class="survey-progress-bar"></div></div>
+                    </div>
+                    <div class="flex-grow flex flex-col justify-center text-center">
+                        <h2 class="text-2xl font-extrabold text-slate-800 mb-2">${screenData.title || screenData.question}</h2>
+                        ${(screenData.type === 'consent' && screenData.question) ? `<p class="text-sm text-slate-600 text-left">${screenData.question}</p>` : ''}
+                        ${optionsHTML}
+                    </div>
+                    <div class="mt-4">${navigationHTML}</div>
+                </div>`;
         }
+        
         function attachSurveyNavListeners() {
             const backBtn = document.getElementById('survey-back-button');
-            const closeBtn = document.getElementById('survey-close-button');
+            const completeBtn = document.getElementById('survey-complete-button');
+
             const screenData = surveyData[currentSurveyScreen];
             const isQuestion = ['radio', 'likert', 'consent'].includes(screenData.type);
+            
             if(isQuestion) {
                  document.querySelectorAll(`input[name="${screenData.id}"]`).forEach(input => {
                      input.addEventListener('change', (e) => {
@@ -459,27 +503,30 @@
             } else if (screenData.type === 'section_header') {
                 setTimeout(() => handleSurveyNav('next'), 1500);
             }
+
             if(backBtn) backBtn.addEventListener('click', () => { playSound('click'); handleSurveyNav('back'); });
-            if(closeBtn) closeBtn.addEventListener('click', () => { 
+            if(completeBtn) completeBtn.addEventListener('click', () => { 
                 playSound('click'); 
-                const pupuGuide = document.getElementById('pupu-guide-container');
-                if(pupuGuide) pupuGuide.style.transform = 'translateY(200px)';
-                renderModal(templates.results(currentScore, userSelections, false));
+                submitSurveyData();
             });
         }
+        
         function handleSurveyNav(direction) {
             const surveyContentArea = document.getElementById('survey-content-area');
             if (!surveyContentArea) return;
             surveyContentArea.dataset.direction = direction;
             const screenData = surveyData[currentSurveyScreen];
             const isQuestion = ['radio', 'likert', 'consent'].includes(screenData.type);
+
             if (direction === 'next') {
                 if (isQuestion) {
                     const selected = document.querySelector(`input[name="${screenData.id}"]:checked`);
-                    if (selected) surveyAnswers[screenData.id] = selected.value;
+                    if (selected) {
+                         surveyAnswers[screenData.id] = selected.value;
+                    }
                 }
                 currentSurveyScreen++;
-            } else {
+            } else { // back
                 currentSurveyScreen--;
             }
             renderSurveyScreen(currentSurveyScreen);
@@ -492,5 +539,4 @@
         });
     </script>
 </body>
-</html>
-�
+</ht
