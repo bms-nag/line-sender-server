@@ -349,6 +349,14 @@
                 await liff.init({ liffId: LIFF_ID });
 
                 if (!liff.isLoggedIn()) {
+                    // ★★★ 変更点: ログイン前にデータを保存 ★★★
+                    const stateToSave = {
+                        currentScore: currentScore,
+                        userSelections: userSelections,
+                        surveyAnswers: surveyAnswers
+                    };
+                    sessionStorage.setItem('appState', JSON.stringify(stateToSave));
+                    sessionStorage.setItem('isLiffLoginRedirect', 'true');
                     liff.login({ redirectUri: window.location.href }); 
                     return; 
                 }
@@ -582,6 +590,22 @@
         
         // --- INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', () => {
+            // ★★★ 変更点: ログイン後の復元処理を追加 ★★★
+            if (sessionStorage.getItem('isLiffLoginRedirect') === 'true') {
+                sessionStorage.removeItem('isLiffLoginRedirect');
+                const savedState = JSON.parse(sessionStorage.getItem('appState'));
+                if (savedState) {
+                    currentScore = savedState.currentScore;
+                    userSelections = savedState.userSelections;
+                    surveyAnswers = savedState.surveyAnswers;
+                    sessionStorage.removeItem('appState');
+                    
+                    // 保存されたデータを使って、直接送信処理を再開
+                    submitSurveyDataToGAS();
+                    return; // 通常の初期化をスキップ
+                }
+            }
+            
              updateProgress();
              renderCard(0);
         });
