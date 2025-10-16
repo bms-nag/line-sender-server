@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>SNS連携大腸がんアンケート結果</title>
+    <title>大腸がん認識度チェック</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
     <!-- LIFF SDK を読み込みます -->
@@ -140,7 +140,7 @@
 </head>
 <body>
     <div class="game-board">
-        <header class="text-center my-4"><h1 class="text-2xl font-extrabold text-slate-700">SNS連携大腸がんアンケート結果</h1></header>
+        <header class="text-center my-4"><h1 class="text-2xl font-extrabold text-slate-700">大腸がん認識度チェック</h1></header>
         <div class="progress-bar-container mb-4">
             <div id="progress-bar"></div>
             <img id="pupu-progress-icon" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3Cfilter id='dropShadow' x='-20%25' y='-20%25' width='140%25' height='140%25'%3E%3CfeDropShadow dx='2' dy='4' stdDeviation='2' flood-color='%23000000' flood-opacity='0.2'/%3E%3C/filter%3E%3CradialGradient id='poopGradient' cx='0.5' cy='1' r='1'%3E%3Cstop offset='0%25' stop-color='%23A1887F'/%3E%3Cstop offset='100%25' stop-color='%235D4037'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cg filter='url(%23dropShadow)'%3E%3Cpath d='M50 95 C 20 95, 20 65, 50 65 C 80 65, 80 95, 50 95 Z' fill='url(%23poopGradient)'/%3E%3Cpath d='M50 70 C 28 70, 28 45, 50 45 C 72 45, 72 70, 50 70 Z' fill='url(%23poopGradient)'/%3E%3Cpath d='M50 50 C 38 50, 38 30, 50 30 C 62 30, 62 50, 50 50 Z' fill='url(%23poopGradient)'/%3E%3Ccircle cx='38' cy='68' r='7' fill='white'/%3E%3Ccircle cx='62' cy='68' r='7' fill='white'/%3E%3Ccircle cx='39' cy='69' r='4' fill='black'/%3E%3Ccircle cx='61' cy='69' r='4' fill='black'/%3E%3Cpath d='M45 82 Q 50 88 55 82' stroke='white' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/g%3E%3C/svg%3E" alt="ぷぷアイコン">
@@ -422,11 +422,22 @@
                     body: JSON.stringify(payload)
                 });
 
+                // ★★★ 変更点: ここから修正したコード ★★★
+                // Check if the request was successful (status in the range 200-299)
+                if (!response.ok) {
+                    // Try to get more details from the response body if possible
+                    const errorText = await response.text();
+                    console.error("GASへのHTTPエラー:", response.status, response.statusText, errorText);
+                    throw new Error(`サーバーとの通信に失敗しました (HTTP ${response.status})。Web Appのデプロイ設定を確認してください。`);
+                }
+
                 const result = await response.json();
 
                 if (result.result !== 'success') {
+                    // This handles errors reported by the GAS script itself (e.g., spreadsheet issues)
                     throw new Error(result.message || 'スプレッドシートへの保存に失敗しました。');
                 }
+                // ★★★ 変更点: ここまで ★★★
                 
                 // 送信成功時: モーダルではなく、ページ全体を結果表示に切り替える
                 closeModal(); // 「送信中」モーダルを閉じる
@@ -440,7 +451,7 @@
                         <p class="text-slate-600 font-bold mb-4">
                             回答の保存中にエラーが発生しました。<br>時間をおいて再度お試しください。
                         </p>
-                        <p class="text-xs text-slate-500 mb-4">${error.message}</p>
+                        <p class="text-xs text-slate-500 mb-4" style="word-wrap: break-word;">${error.message}</p>
                         <button id="show-results-anyway-button" class="action-button">結果だけ見る</button>
                     </div>
                 `);
@@ -607,7 +618,6 @@
             });
         }
         
-        // --- ★★★ Corrected Code ★★★ ---
         function handleSurveyNav(direction) {
             const surveyContentArea = document.getElementById('survey-content-area');
             if (!surveyContentArea) return;
@@ -656,7 +666,6 @@
                 }
             }
         }
-        // --- ★★★ End of Corrected Code ★★★ ---
         
         // --- INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', () => {
@@ -682,3 +691,5 @@
     </script>
 </body>
 </html>
+
+
