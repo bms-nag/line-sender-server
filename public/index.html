@@ -88,7 +88,7 @@
             border: 2px solid white; cursor: pointer; transition: all 0.1s ease-out;
         }
         .action-button:active { transform: translateY(3px); box-shadow: 0 2px 0 #DB2777; }
-       
+        
         /* --- Survey Styles --- */
         .survey-container-wrapper { width: 100%; position: relative; }
         #pupu-guide-container { position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%); z-index: 10; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
@@ -111,7 +111,7 @@
         .survey-nav-button:active { transform: translateY(3px); box-shadow: 0 2px 0 #4f46e5; }
         .survey-back-button { background: linear-gradient(180deg, #d1d5db, #9ca3af); box-shadow: 0 5px 0 #6b7280; }
         .survey-back-button:active { transform: translateY(3px); box-shadow: 0 2px 0 #6b7280; }
-       
+        
         .survey-option-decline {
             background-color: #f9fafb;
             color: #9ca3af;
@@ -148,7 +148,7 @@
         <div id="card-container" class="relative" style="min-height: 450px;"></div>
     </div>
     <div id="modal-container"></div>
-   
+    
     <script>
         // --- CONFIGURATION ---
         const LIFF_ID = "2007757059-nepa16EO";
@@ -161,8 +161,8 @@
             { question: "大腸がんは、おじいちゃんおばあちゃんの病気。若い人は関係ない！", correctAnswer: "×", explanation: "そんなことない！最近は若い人でも増えてるから油断は禁物だよ。", illustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle' dominant-baseline='middle'%3E👨‍👩‍👧‍👦%3C/text%3E%3C/svg%3E`, explanationIllustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle'%3E🧑%3C/text%3E%3C/svg%3E`},
             { question: "大腸カメラ（内視鏡）って、ものすごーく痛くて大変な検査だ！", correctAnswer: "×", explanation: "今は麻酔で楽に受けられる病院が多いんだ。CT検査もあるよ！", illustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle' dominant-baseline='middle'%3E😴%3C/text%3E%3C/svg%3E`, explanationIllustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle'%3E😌%3C/text%3E%3C/svg%3E`},
             { question: "ポリープが見つかっても、全部ががんになるわけじゃないから、放っておいても平気！", correctAnswer: "×", explanation: "がんになるポリープもあるから、お医者さんの指示に従ってね。", illustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle' dominant-baseline='middle'%3E⚠️%3C/text%3E%3C/svg%3E`, explanationIllustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle'%3E👨‍⚕️%3C/text%3E%3C/svg%3E`},
-            { question: "家族にがんの人がいなきゃ、自分は遺伝的に安心だ！", correctAnswer: "×", explanation: "遺伝だけじゃない！食生活や運動不足も大きな原因になるんだ。", illustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle' dominant-baseline='middle'%3E🧬%3C/text%3E%3C/svg%3E`, explanationIllustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle'%3E🍔%3C/text%3E%3C/svg%3E`},
-            { question: "運動は、大腸がんの予防に効果がある。", correctAnswer: "○", explanation: "定期的な運動は、がんのリスクを下げることが知られているよ。日々の生活に運動を取り入れよう！", illustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle' dominant-baseline='middle'%3E🏃‍♂️%3C/text%3E%3C/svg%3E`, explanationIllustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle'%3E💪%3C/text%3E%3C/svg%3E`},
+            { question: "家族にがんの人がいなきゃ、自分は遺伝的に安心だ！", correctAnswer: "×", explanation: "遺伝だけじゃない！食生活や運動不足も大きな原因になるんだ。", illustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle' dominant-baseline='middle'%3E🧬%3C/text%3E%3C/svg%3E`, explanationIllustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle' dominant-baseline='middle'%3E🍔%3C/text%3E%3C/svg%3E`},
+            { question: "運動は、大腸がんの予防に効果がある。", correctAnswer: "○", explanation: "定期的な運動は、がんのリスクを下げることが知られているよ。日々の生活に運動を取り入れよう！", illustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle' dominant-baseline='middle'%3E🏃‍♂️%3C/text%3E%3C/svg%3E`, explanationIllustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle' dominant-baseline='middle'%3E💪%3C/text%3E%3C/svg%3E`},
             { question: "一回検査してOKだったら、もう一生検査しなくていい！", correctAnswer: "×", explanation: "体は変化するから、定期的なチェックが大切なんだよ。", illustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle' dominant-baseline='middle'%3E🗓️%3C/text%3E%3C/svg%3E`, explanationIllustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle'%3E🔄%3C/text%3E%3C/svg%3E`}
         ];
         const surveyData = [
@@ -202,7 +202,7 @@
             else if(type === 'wrong') wrongSound.triggerAttackRelease("C3", "8n");
             else clickSound.triggerAttackRelease("C4", "32n");
         }
-       
+        
         // --- TEMPLATES & RENDERING ---
         function renderCard(index) {
             const q = quizData[index];
@@ -271,7 +271,7 @@
                 const isCorrect = selections[i] === item.correctAnswer;
                 return `<div class="p-4 rounded-2xl ${isCorrect ? 'bg-green-50' : 'bg-red-50'} border-2 ${isCorrect ? 'border-green-200' : 'border-red-200'}"><p class="font-bold text-slate-700 text-sm text-left">${item.question}</p><div class="grid grid-cols-2 gap-3 text-center my-3"><div class="p-2 rounded-xl bg-white/80"><p class="text-slate-500 font-bold text-xs">あなたの答え</p><p class="text-5xl font-extrabold ${isCorrect ? 'text-slate-700' : 'text-red-500'}">${selections[i]}</p></div><div class="p-2 rounded-xl bg-white/80"><p class="text-slate-500 font-bold text-xs">正解は...</p><p class="text-5xl font-extrabold text-amber-500">${item.correctAnswer}</p></div></div><div class="mt-2 text-left p-3 bg-white/50 rounded-xl flex items-center gap-3"><img src="${item.explanationIllustration}" class="w-12 h-12 flex-shrink-0"><p class="text-sm font-bold text-slate-600 flex-1">${item.explanation}</p></div></div>`;
             }).join('');
-           
+            
             const buttonHTML = showSurveyButton 
                 ? `<div class="mt-6 text-center"><button id="start-survey-button" class="action-button text-xl w-full max-w-xs mx-auto blinking-next-button" style="background: linear-gradient(180deg, #4ade80, #22c55e); --shadow-color: #15803d; padding: 1rem 2rem;">次へ！</button></div>`
                 : `<div class="mt-6 text-center"><button id="close-final-results-button" class="action-button text-xl w-full max-w-xs mx-auto" style="background: linear-gradient(180deg, #a78bfa, #8b5cf6); box-shadow-color: #6d28d9; padding: 1rem 2rem;">閉じる</button></div>`;
@@ -287,7 +287,7 @@
                 handleAnswer(index, e.target.dataset.value);
             }));
         }
-       
+        
         function attachModalListeners() {
             const listeners = {
                 '#line-register-button': () => {
@@ -313,7 +313,7 @@
                 if (el) el.addEventListener('click', listeners[selector]);
             }
         }
-       
+        
         // --- CORE LOGIC ---
         function handleAnswer(index, value) {
             userSelections[index] = value;
@@ -396,7 +396,7 @@
 
                 const profile = await liff.getProfile();
                 const userId = profile.userId;
-               
+                
                 const quizResults = quizData.map((q, index) => {
                     const userAnswer = userSelections[index] || "未回答";
                     return {
@@ -413,7 +413,7 @@
                     surveyData: surveyAnswers,
                     quizResults: quizResults
                 };
-               
+                
                 const response = await fetch(GAS_WEB_APP_URL, {
                     method: 'POST',
                     headers: {
@@ -427,7 +427,7 @@
                 if (result.result !== 'success') {
                     throw new Error(result.message || 'スプレッドシートへの保存に失敗しました。');
                 }
-               
+                
                 // 送信成功時: モーダルではなく、ページ全体を結果表示に切り替える
                 closeModal(); // 「送信中」モーダルを閉じる
                 showFinalResultsPage();
@@ -478,11 +478,11 @@
             const contentHTML = buildSurveyScreenHTML(screenData);
             const surveyContentArea = document.getElementById('survey-content-area');
             if(!surveyContentArea) return;
-           
+            
             const currentContentEl = surveyContentArea.querySelector('.survey-screen-content');
             if (currentContentEl && !isInitial) {
                 currentContentEl.classList.add('content-out');
-               
+                
                 setTimeout(() => {
                     surveyContentArea.innerHTML = contentHTML;
                     const newContentEl = surveyContentArea.querySelector('.survey-screen-content');
@@ -496,7 +496,7 @@
                 attachSurveyNavListeners();
             }
         }
-       
+        
         function buildSurveyScreenHTML(screenData) {
             let optionsHTML = '';
             const isQuestion = ['radio', 'likert', 'consent'].includes(screenData.type);
@@ -546,7 +546,7 @@
             } else {
                  navigationHTML = `<div class="h-16 mt-6"></div>`; // Placeholder
             }
-           
+            
             const progress = ((screenData.screen || 0) / totalScreens) * 100;
 
             return `
@@ -563,7 +563,7 @@
                     <div class="mt-4">${navigationHTML}</div>
                 </div>`;
         }
-       
+        
         function attachSurveyNavListeners() {
             const backBtn = document.getElementById('survey-back-button');
             const completeBtn = document.getElementById('survey-complete-button');
@@ -571,25 +571,25 @@
             const screenData = surveyData[currentSurveyScreen];
             if (!screenData) return;
             const isQuestion = ['radio', 'likert', 'consent'].includes(screenData.type);
-           
+            
             if(isQuestion) {
                  document.querySelectorAll(`.survey-option-label, .likert-emoji-label`).forEach(label => {
-                      label.addEventListener('click', () => {
-                          const inputId = label.getAttribute('for');
-                          const input = document.getElementById(inputId);
-                          if (!input || input.disabled) return;
+                       label.addEventListener('click', () => {
+                           const inputId = label.getAttribute('for');
+                           const input = document.getElementById(inputId);
+                           if (!input || input.disabled) return;
 
-                          const allInputsInGroup = document.querySelectorAll(`input[name="${input.name}"]`);
-                          allInputsInGroup.forEach(i => i.disabled = true);
-                         
-                          input.checked = true;
+                           const allInputsInGroup = document.querySelectorAll(`input[name="${input.name}"]`);
+                           allInputsInGroup.forEach(i => i.disabled = true);
+                           
+                           input.checked = true;
 
-                          playSound('click');
-                          setTimeout(() => {
-                              allInputsInGroup.forEach(i => i.disabled = false);
-                              handleSurveyNav('next');
-                          }, 250);
-                      });
+                           playSound('click');
+                           setTimeout(() => {
+                               allInputsInGroup.forEach(i => i.disabled = false);
+                               handleSurveyNav('next');
+                           }, 250);
+                       });
                  });
             } else if (screenData.type === 'section_header') {
                 setTimeout(() => handleSurveyNav('next'), 800);
@@ -601,15 +601,21 @@
                 submitSurveyDataToGAS();
             });
         }
-       
-        // --- ★★★ 変更点: ここから修正したコード ★★★ ---
+        
+        // --- ★★★ 修正後のコード ★★★ ---
+        /**
+         * @function handleSurveyNav
+         * @description アンケートの「次へ」「戻る」を制御する。
+         * - 'next': 現在の回答を保存し、次の画面へ進む。
+         * - 'back': 前の画面へ戻る（セクションヘッダーはスキップする）。
+         */
         function handleSurveyNav(direction) {
             const surveyContentArea = document.getElementById('survey-content-area');
             if (!surveyContentArea) return;
             surveyContentArea.dataset.direction = direction;
 
             if (direction === 'next') {
-                // Save answer for the current screen before navigating
+                // 現在の画面の回答を保存する
                 const screenData = surveyData[currentSurveyScreen];
                 if (screenData) {
                     const isQuestion = ['radio', 'likert', 'consent'].includes(screenData.type);
@@ -621,32 +627,30 @@
                     }
                 }
 
-                // If this is the consent screen, submit data instead of going to the completion screen
-                if (screenData && screenData.type === 'consent') {
-                    submitSurveyDataToGAS();
-                    return; // Stop further navigation
-                }
-
-                // Check if we can navigate to the next screen
+                // 次の画面に進めるかチェック
                 if (currentSurveyScreen < surveyData.length - 1) {
                     currentSurveyScreen++;
                     renderSurveyScreen(currentSurveyScreen);
                 } else {
-                    console.warn("Tried to navigate past the end of the survey.");
+                    // このロジックは完了画面のボタンで処理されるため、通常はここに来ない
+                    console.warn("アンケートの最後を超えて進もうとしました。");
                 }
 
-            } else { // back
-                // Check if we can navigate to the previous screen
+            } else { // 'back'の場合
+                // 前の画面に戻れるかチェック
                 if (currentSurveyScreen > 0) {
                     currentSurveyScreen--;
+                    // もし戻った先がセクションヘッダーなら、もう一つ前に戻る
+                    if (surveyData[currentSurveyScreen].type === 'section_header' && currentSurveyScreen > 0) {
+                        currentSurveyScreen--;
+                    }
                     renderSurveyScreen(currentSurveyScreen);
                 } else {
-                    console.warn("Tried to navigate before the start of the survey.");
+                    console.warn("アンケートの最初より前に戻ろうとしました。");
                 }
             }
         }
-        // --- ★★★ 変更点: ここまで ★★★ ---
-       
+        
         // --- INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', () => {
             // LIFFログインからのリダイレクト後の復元処理
@@ -658,13 +662,13 @@
                     userSelections = savedState.userSelections;
                     surveyAnswers = savedState.surveyAnswers;
                     sessionStorage.removeItem('appState');
-                   
+                    
                     // 保存されたデータを使って、直接送信処理を再開
                     submitSurveyDataToGAS();
                     return; // 通常の初期化をスキップ
                 }
             }
-           
+            
              updateProgress();
              renderCard(0);
         });
