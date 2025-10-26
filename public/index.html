@@ -6,7 +6,6 @@
 <title>大腸がん認識度チェック</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
-<!-- LIFF SDK を読み込みます -->
 <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,7 +14,7 @@
 body {
 font-family: 'M PLUS Rounded 1c', sans-serif;
 background: #EFF6FF;
--webkit-user-select: none; 
+-webkit-user-select: none; 
 user-select: none;
 overflow-y: auto;
 }
@@ -153,8 +152,7 @@ border-color: #d1d5db;
 // --- CONFIGURATION ---
 const LIFF_ID = "2007757059-nepa16EO";
 const LINE_ACCOUNT_URL = "https://lin.ee/NmU3RyA";
-        const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzCuJdCXtvHGArFlrjpHS5sSlgHnlfI7uYkfNujUAlpykbXPASlUaEcD-yQU2gf2pVj/exec";
-        const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzkbiivJ-j7dDT5wXy9FwSF2NAsA_Cb_yGcEJaAPZSoaY8e0qaNxB85Z3_Z42WF0Ycw/exec";
+        const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzkbiivJ-j7dDT5wXy9FwSF2NAsA_Cb_yGcEJaAPZSoaY8e0qaNxB85Z3_Z42WF0Ycw/exec";
 
 const quizData = [
 { question: "大腸がんの初期には、必ずお腹の痛みや血便などの自覚症状がある。", correctAnswer: "×", explanation: "初期は症状がないことが多いんだ。だから検診が大事！", illustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle' dominant-baseline='middle'%3E🤫%3C/text%3E%3C/svg%3E`, explanationIllustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle'%3E👻%3C/text%3E%3C/svg%3E`},
@@ -162,7 +160,7 @@ const quizData = [
 { question: "大腸がんは、おじいちゃんおばあちゃんの病気。若い人は関係ない！", correctAnswer: "×", explanation: "そんなことない！最近は若い人でも増えてるから油断は禁物だよ。", illustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle' dominant-baseline='middle'%3E👨‍👩‍👧‍👦%3C/text%3E%3C/svg%3E`, explanationIllustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle'%3E🧑%3C/text%3E%3C/svg%3E`},
 { question: "大腸カメラ（内視鏡）、大腸CTって、ものすごーく痛くて大変な検査だ！", correctAnswer: "×", explanation: "今は麻酔で楽に受けられる病院が多いんだ。CT検査もあるよ！", illustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle' dominant-baseline='middle'%3E😴%3C/text%3E%3C/svg%3E`, explanationIllustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle'%3E😌%3C/text%3E%3C/svg%3E`},
 { question: "ポリープが見つかっても、全部ががんになるわけじゃないから、放っておいても平気！", correctAnswer: "×", explanation: "がんになるポリープもあるから、お医者さんの指示に従ってね。", illustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle' dominant-baseline='middle'%3E⚠️%3C/text%3E%3C/svg%3E`, explanationIllustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle'%3E👨‍⚕️%3C/text%3E%3C/svg%3E`},
-{ question: "家族にがんの人がいなきゃ、自分は遺伝的に安心だ！", correctAnswer: "×", explanation: "遺伝だけじゃない！食生活や運動不足も大きな原因になるんだ。", illustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle' dominant-baseline='middle'%3E🧬%3C/text%3E%3C/svg%3E`, explanationIllustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle' dominant-baseline='middle'%3E🍔%3C/text%3E%3C/svg%3E`},
+{ question: "家族にがんの人がいなきゃ、自分は遺伝的に安心だ！", correctAnswer: "×", explanation: "遺伝だけじゃない！食生活や運動不足も大きな原因になるんだ。", illustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle' dominant-baseline='middle'%3E🧬%3C/text%3E%3C/svg%3E`, explanationIllustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle'%3E🍔%3C/text%3E%3C/svg%3E`},
 { question: "運動は、大腸がんの予防に効果がある。", correctAnswer: "○", explanation: "定期的な運動は、がんのリスクを下げることが知られているよ。日々の生活に運動を取り入れよう！", illustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle' dominant-baseline='middle'%3E🏃‍♂️%3C/text%3E%3C/svg%3E`, explanationIllustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle'%3E💪%3C/text%3E%3C/svg%3E`},
 { question: "一回検査してOKだったら、もう一生検査しなくていい！", correctAnswer: "×", explanation: "体は変化するから、定期的なチェックが大切なんだよ。", illustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle' dominant-baseline='middle'%3E🗓️%3C/text%3E%3C/svg%3E`, explanationIllustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle'%3E🔄%3C/text%3E%3C/svg%3E`}
 ];
@@ -238,32 +236,32 @@ pupuIcon.style.left = `${progress}%`;
 const templates = {};
 
 templates.linePrompt = `
-           <div style="background:white; border-radius:1.5rem; padding:2rem;">
-               <div class="text-center">
-                   <h2 class="text-xl font-bold text-green-600 mb-2">診断レポートの前に！</h2>
-                   <p class="text-slate-600 font-bold mb-6 text-sm">
-                       結果を見るには、LINEのお友達登録をお願いします！<br>役立つ健康情報もお届けします。
-                   </p>
-                   <div class="space-y-3">
-                       <button id="line-register-button" class="action-button w-full" style="background: linear-gradient(180deg, #4ade80, #22c55e); box-shadow-color: #15803d;">
-                           LINE登録して、結果を見る
-                       </button>
-                   </div>
-               </div>
-           </div>`;
+           <div style="background:white; border-radius:1.5rem; padding:2rem;">
+               <div class="text-center">
+                   <h2 class="text-xl font-bold text-green-600 mb-2">診断レポートの前に！</h2>
+                   <p class="text-slate-600 font-bold mb-6 text-sm">
+                       結果を見るには、LINEのお友達登録をお願いします！<br>役立つ健康情報もお届けします。
+                   </p>
+                   <div class="space-y-3">
+                       <button id="line-register-button" class="action-button w-full" style="background: linear-gradient(180deg, #4ade80, #22c55e); box-shadow-color: #15803d;">
+                           LINE登録して、結果を見る
+                       </button>
+                   </div>
+               </div>
+           </div>`;
 
 templates.lineThanks = `
-           <div style="background:white; border-radius:1.5rem; padding:2rem;">
-               <div class="text-center">
-                   <h2 class="text-xl font-bold text-green-600 mb-2">ありがとう！</h2>
-                   <p class="text-slate-600 font-bold mb-4">
-                       下のボタンで結果を確認してね。
-                   </p>
-                   <button id="show-results-button" class="action-button w-full">
-                       結果を見る
-                   </button>
-               </div>
-           </div>`;
+           <div style="background:white; border-radius:1.5rem; padding:2rem;">
+               <div class="text-center">
+                   <h2 class="text-xl font-bold text-green-600 mb-2">ありがとう！</h2>
+                   <p class="text-slate-600 font-bold mb-4">
+                       下のボタンで結果を確認してね。
+                   </p>
+                   <button id="show-results-button" class="action-button w-full">
+                       結果を見る
+                   </button>
+               </div>
+           </div>`;
 
 templates.results = (score, selections, showSurveyButton = true) => {
 const percentage = Math.round((score / quizData.length) * 100);
@@ -273,7 +271,7 @@ const isCorrect = selections[i] === item.correctAnswer;
 return `<div class="p-4 rounded-2xl ${isCorrect ? 'bg-green-50' : 'bg-red-50'} border-2 ${isCorrect ? 'border-green-200' : 'border-red-200'}"><p class="font-bold text-slate-700 text-sm text-left">${item.question}</p><div class="grid grid-cols-2 gap-3 text-center my-3"><div class="p-2 rounded-xl bg-white/80"><p class="text-slate-500 font-bold text-xs">あなたの答え</p><p class="text-5xl font-extrabold ${isCorrect ? 'text-slate-700' : 'text-red-500'}">${selections[i]}</p></div><div class="p-2 rounded-xl bg-white/80"><p class="text-slate-500 font-bold text-xs">正解は...</p><p class="text-5xl font-extrabold text-amber-500">${item.correctAnswer}</p></div></div><div class="mt-2 text-left p-3 bg-white/50 rounded-xl flex items-center gap-3"><img src="${item.explanationIllustration}" class="w-12 h-12 flex-shrink-0"><p class="text-sm font-bold text-slate-600 flex-1">${item.explanation}</p></div></div>`;
 }).join('');
 
-const buttonHTML = showSurveyButton 
+const buttonHTML = showSurveyButton 
 ? `<div class="mt-6 text-center"><button id="start-survey-button" class="action-button text-xl w-full max-w-xs mx-auto blinking-next-button" style="background: linear-gradient(180deg, #4ade80, #22c55e); --shadow-color: #15803d; padding: 1rem 2rem;">次へ！</button></div>`
 : `<div class="mt-6 text-center"><button id="close-final-results-button" class="action-button text-xl w-full max-w-xs mx-auto" style="background: linear-gradient(180deg, #a78bfa, #8b5cf6); box-shadow-color: #6d28d9; padding: 1rem 2rem;">閉じる</button></div>`;
 
@@ -281,7 +279,7 @@ return `<div style="background:white; border-radius:1.5rem; padding:1rem;"><div 
 };
 
 // --- EVENT LISTENERS ---
-function attachCardListeners(index) { 
+function attachCardListeners(index) { 
 document.getElementById(`quiz-card-${index}`).querySelectorAll('.btn-choice').forEach(btn => btn.addEventListener('click', e => {
 if (e.currentTarget.parentElement.parentElement.dataset.answered) return;
 e.currentTarget.parentElement.parentElement.dataset.answered = 'true';
@@ -324,7 +322,7 @@ card.style.opacity = '0';
 card.style.transform = 'scale(0.9)';
 setTimeout(() => {
 currentQIndex++; updateProgress();
-if (currentQIndex < quizData.length) { renderCard(currentQIndex); } 
+if (currentQIndex < quizData.length) { renderCard(currentQIndex); } 
 else {
 cardContainer.innerHTML = `<div class="quiz-card flex items-center justify-center text-center"><h2 class="text-2xl font-extrabold text-slate-700">おつかれさま！<br>診断レポートを作成するよ！</h2></div>`;
 setTimeout(() => {
@@ -335,9 +333,9 @@ renderModal(templates.linePrompt);
 }
 
 /**
-        * @function showFinalResultsPage
-        * @description アンケート送信後に、画面全体を最終結果表示に切り替える関数
-        */
+        * @function showFinalResultsPage
+        * @description アンケート送信後に、画面全体を最終結果表示に切り替える関数
+        */
 function showFinalResultsPage() {
 // 上部のプログレスバーを非表示にする
 const mainProgressBar = document.querySelector('.progress-bar-container');
@@ -355,8 +353,8 @@ closeButton.addEventListener('click', () => {
 playSound('click');
 // 閉じるボタンが押されたら、感謝のメッセージを表示
 cardContainer.innerHTML = `<div class="survey-shell flex items-center justify-center text-center" style="min-height: 500px;">
-                       <h2 class="text-2xl font-extrabold text-slate-700">ご協力ありがとうございました！<br>このウィンドウを閉じてください。</h2>
-                   </div>`;
+                       <h2 class="text-2xl font-extrabold text-slate-700">ご協力ありがとうございました！<br>このウィンドウを閉じてください。</h2>
+                   </div>`;
 // LINEアプリ内で開かれている場合は、ウィンドウを閉じる
 if (typeof liff !== 'undefined' && liff.isInClient()) {
 setTimeout(() => liff.closeWindow(), 2000);
@@ -366,17 +364,17 @@ setTimeout(() => liff.closeWindow(), 2000);
 }
 
 /**
-        * @function submitSurveyDataToGAS
-        * @description アンケートデータをGASに送信する関数。成功時・失敗時の表示ロジックを修正。
-        */
+        * @function submitSurveyDataToGAS
+        * @description アンケートデータをGASに送信する関数。成功時・失敗時の表示ロジックを修正。
+        */
 async function submitSurveyDataToGAS() {
 renderModal(`
-               <div style="background:white; border-radius:1.5rem; padding:2rem; text-align:center;">
-                   <h2 class="text-xl font-bold text-indigo-600 mb-2">送信中...</h2>
-                   <p id="save-status" class="text-slate-600 font-bold mb-4"></p>
-                   <div class="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-indigo-500 mx-auto"></div>
-               </div>
-           `, false);
+               <div style="background:white; border-radius:1.5rem; padding:2rem; text-align:center;">
+                   <h2 class="text-xl font-bold text-indigo-600 mb-2">送信中...</h2>
+                   <p id="save-status" class="text-slate-600 font-bold mb-4"></p>
+                   <div class="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-indigo-500 mx-auto"></div>
+               </div>
+           `, false);
 
 const statusElement = document.getElementById('save-status');
 
@@ -391,8 +389,8 @@ surveyAnswers: surveyAnswers
 };
 sessionStorage.setItem('appState', JSON.stringify(stateToSave));
 sessionStorage.setItem('isLiffLoginRedirect', 'true');
-liff.login({ redirectUri: window.location.href }); 
-return; 
+liff.login({ redirectUri: window.location.href }); 
+return; 
 }
 
 const profile = await liff.getProfile();
@@ -447,15 +445,15 @@ showFinalResultsPage();
 } catch (error) {
 console.error("GASへの送信エラー:", error);
 renderModal(`
-                   <div style="background:white; border-radius:1.5rem; padding:2rem; text-align:center;">
-                       <h2 class="text-xl font-bold text-red-600 mb-2">保存エラー</h2>
-                       <p class="text-slate-600 font-bold mb-4">
-                           回答の保存中にエラーが発生しました。<br>時間をおいて再度お試しください。
-                       </p>
-                       <p class="text-xs text-slate-500 mb-4" style="word-wrap: break-word;">${error.message}</p>
-                       <button id="show-results-anyway-button" class="action-button">結果だけ見る</button>
-                   </div>
-               `);
+                   <div style="background:white; border-radius:1.5rem; padding:2rem; text-align:center;">
+                       <h2 class="text-xl font-bold text-red-600 mb-2">保存エラー</h2>
+                       <p class="text-slate-600 font-bold mb-4">
+                           回答の保存中にエラーが発生しました。<br>時間をおいて再度お試しください。
+                       </p>
+                       <p class="text-xs text-slate-500 mb-4" style="word-wrap: break-word;">${error.message}</p>
+                       <button id="show-results-anyway-button" class="action-button">結果だけ見る</button>
+                   </div>
+               `);
 document.getElementById('show-results-anyway-button').addEventListener('click', () => {
 playSound('click');
 // エラー時でも、ページ全体を結果表示に切り替える
@@ -475,8 +473,8 @@ if(progressBarContainer) progressBarContainer.style.display = 'none';
 cardContainer.classList.remove('relative');
 cardContainer.style.minHeight = 'auto';
 cardContainer.innerHTML = `<div class="survey-shell">
-                   <div id="survey-content-area" class="survey-content-area"></div>
-               </div>`;
+                   <div id="survey-content-area" class="survey-content-area"></div>
+               </div>`;
 renderSurveyScreen(0, true);
 }, 300);
 }
@@ -521,9 +519,9 @@ const currentScreenNum = questionScreens.findIndex(s => s.id === screenData.id) 
 
 if (screenData.type === 'radio' || screenData.type === 'consent') {
 optionsHTML = `<div class="grid ${screenData.layout || 'grid-cols-1'} gap-4 mt-4">${screenData.options.map((opt, i) => {
-                   const optionClass = opt.style === 'decline' ? 'survey-option-decline' : '';
-                   return `<div style="animation-delay: ${i * 70 + 150}ms"><input type="radio" name="${screenData.id}" value="${opt.t}" class="survey-option-input hidden" id="opt-${screenData.id}-${i}" ${savedAnswer === opt.t ? 'checked' : ''}><label for="opt-${screenData.id}-${i}" class="survey-option-label ${optionClass}">${opt.i ? `<span class="icon">${opt.i}</span>` : ''}<span>${opt.t}</span></label></div>`
-               }).join('')}</div>`;
+                   const optionClass = opt.style === 'decline' ? 'survey-option-decline' : '';
+                   return `<div style="animation-delay: ${i * 70 + 150}ms"><input type="radio" name="${screenData.id}" value="${opt.t}" class="survey-option-input hidden" id="opt-${screenData.id}-${i}" ${savedAnswer === opt.t ? 'checked' : ''}><label for="opt-${screenData.id}-${i}" class="survey-option-label ${optionClass}">${opt.i ? `<span class="icon">${opt.i}</span>` : ''}<span>${opt.t}</span></label></div>`
+               }).join('')}</div>`;
 } else if (screenData.type === 'likert') {
 const faces = ['😥', '😟', '😐', '🙂', '😄'];
 const leftAnnotationLabel = screenData.options.find(o => o.v === 1).l;
@@ -531,31 +529,31 @@ const rightAnnotationLabel = screenData.options.find(o => o.v === 5).l;
 const middleAnnotationLabel = screenData.options.find(o => o.v === 3).l;
 
 optionsHTML = `
-                   <div class="likert-horizontal-container">
-                       <div class="likert-emoji-bar">
-                           ${[1, 2, 3, 4, 5].map((v) => `
-                               <div>
-                                   <input type="radio" name="${screenData.id}" value="${v}" class="likert-emoji-input hidden" id="opt-${screenData.id}-${v}" ${savedAnswer == v ? 'checked' : ''}>
-                                   <label for="opt-${screenData.id}-${v}" class="likert-emoji-label">${faces[v-1]}</label>
-                               </div>
-                           `).join('')}
-                       </div>
-                       <div class="likert-annotation-bar">
-                           <span>${leftAnnotationLabel}</span>
-                           <span>${middleAnnotationLabel}</span>
-                           <span>${rightAnnotationLabel}</span>
-                       </div>
-                   </div>`;
+                   <div class="likert-horizontal-container">
+                       <div class="likert-emoji-bar">
+                           ${[1, 2, 3, 4, 5].map((v) => `
+                               <div>
+                                   <input type="radio" name="${screenData.id}" value="${v}" class="likert-emoji-input hidden" id="opt-${screenData.id}-${v}" ${savedAnswer == v ? 'checked' : ''}>
+                                   <label for="opt-${screenData.id}-${v}" class="likert-emoji-label">${faces[v-1]}</label>
+                               </div>
+                           `).join('')}
+                       </div>
+                       <div class="likert-annotation-bar">
+                           <span>${leftAnnotationLabel}</span>
+                           <span>${middleAnnotationLabel}</span>
+                           <span>${rightAnnotationLabel}</span>
+                       </div>
+                   </div>`;
 }
 
 let navigationHTML = '';
 if (screenData.type === 'completion') {
 navigationHTML = `
-                   <div class="mt-6 flex flex-col items-center gap-4">
-                       <button id="survey-complete-button" class="survey-nav-button w-full max-w-xs">${screenData.buttonText}</button>
-                       <button id="survey-back-button" class="survey-nav-button survey-back-button w-1/2">戻る</button>
-                   </div>
-               `;
+                   <div class="mt-6 flex flex-col items-center gap-4">
+                       <button id="survey-complete-button" class="survey-nav-button w-full max-w-xs">${screenData.buttonText}</button>
+                       <button id="survey-back-button" class="survey-nav-button survey-back-button w-1/2">戻る</button>
+                   </div>
+               `;
 } else if (screenData.type === 'section_header') {
 navigationHTML = `<div class="h-16 mt-6"></div>`; // Placeholder for auto-advance
 } else if (currentSurveyScreen > 0) {
@@ -567,18 +565,18 @@ navigationHTML = `<div class="h-16 mt-6"></div>`; // Placeholder
 const progress = (currentScreenNum > 0 ? (currentScreenNum / totalScreens) * 100 : 0);
 
 return `
-               <div class="survey-screen-content">
-                   <div class="mb-4">
-                       ${isQuestion ? `<p class="text-right text-sm font-bold text-indigo-400 mb-1">しつもん ${currentScreenNum} / ${totalScreens}</p>`: '<p class="text-right text-sm font-bold text-transparent mb-1">_</p>'}
-                       <div class="survey-progress-bar-container"><div style="width: ${progress}%" class="survey-progress-bar"></div></div>
-                   </div>
-                   <div class="flex-grow flex flex-col justify-center text-center">
-                       <h2 class="text-2xl font-extrabold text-slate-800 mb-2">${screenData.title || screenData.question}</h2>
-                       ${(screenData.type === 'consent' && screenData.question) ? `<p class="text-sm text-slate-600 text-left">${screenData.question}</p>` : ''}
-                       ${optionsHTML}
-                   </div>
-                   <div class="mt-4">${navigationHTML}</div>
-               </div>`;
+               <div class="survey-screen-content">
+                   <div class="mb-4">
+                       ${isQuestion ? `<p class="text-right text-sm font-bold text-indigo-400 mb-1">しつもん ${currentScreenNum} / ${totalScreens}</p>`: '<p class="text-right text-sm font-bold text-transparent mb-1">_</p>'}
+                       <div class="survey-progress-bar-container"><div style="width: ${progress}%" class="survey-progress-bar"></div></div>
+                   </div>
+                   <div class="flex-grow flex flex-col justify-center text-center">
+                       <h2 class="text-2xl font-extrabold text-slate-800 mb-2">${screenData.title || screenData.question}</h2>
+                       ${(screenData.type === 'consent' && screenData.question) ? `<p class="text-sm text-slate-600 text-left">${screenData.question}</p>` : ''}
+                       ${optionsHTML}
+                   </div>
+                   <div class="mt-4">${navigationHTML}</div>
+               </div>`;
 }
 
 function attachSurveyNavListeners() {
@@ -613,8 +611,8 @@ setTimeout(() => handleSurveyNav('next'), 800);
 }
 
 if(backBtn) backBtn.addEventListener('click', () => { playSound('click'); handleSurveyNav('back'); });
-if(completeBtn) completeBtn.addEventListener('click', () => { 
-playSound('click'); 
+if(completeBtn) completeBtn.addEventListener('click', () => { 
+playSound('click'); 
 submitSurveyDataToGAS();
 });
 }
@@ -692,5 +690,3 @@ renderCard(0);
 </script>
 </body>
 </html>
-
-~
