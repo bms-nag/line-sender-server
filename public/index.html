@@ -6,7 +6,7 @@
     <title>大腸がん認識度チェック</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
-    <!-- LIFF SDK を読み込みます -->
+    <!-- LIFF SDK -->
     <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -91,8 +91,6 @@
         
         /* --- Survey Styles --- */
         .survey-container-wrapper { width: 100%; position: relative; }
-        #pupu-guide-container { position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%); z-index: 10; transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        #pupu-guide { width: 120px; height: auto; animation: pupu-breathing 3s infinite ease-in-out; }
         .survey-shell { min-height: 500px; display: flex; flex-direction: column; background: white; border-radius: 1.5rem; padding: 1.5rem; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05), 0 20px 20px -10px rgba(99, 102, 241, 0.2); border: 1px solid #e0e7ff; }
         .survey-content-area { position: relative; flex-grow: 1; display: flex; flex-direction: column; }
         .survey-screen-content { display: flex; flex-direction: column; flex-grow: 1; }
@@ -153,7 +151,9 @@
         // --- CONFIGURATION ---
         const LIFF_ID = "2007757059-nepa16EO";
         const LINE_ACCOUNT_URL = "https://lin.ee/NmU3RyA";
-        const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzkbiivJ-j7dDT5wXy9FwSF2NAsA_Cb_yGcEJaAPZSoaY8e0qaNxB85Z3_Z42WF0Ycw/exec";
+        
+        // ★★★ ここを必ず【GASの「新しいデプロイ」】で発行された最新のURLに書き換えてください ★★★
+        const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxcfMxvf1tbTaErNUDQjDrsJhVZ3gzsh99P-it8Tmeykem0UZdciUtlQHQH1Gc8s69r/exec";
 
         const quizData = [
             { question: "大腸がんの初期には、必ずお腹の痛みや血便などの自覚症状がある。", correctAnswer: "×", explanation: "初期は症状がないことが多いんだ。だから検診が大事！", illustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle' dominant-baseline='middle'%3E🤫%3C/text%3E%3C/svg%3E`, explanationIllustration: `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='55' font-size='50' text-anchor='middle'%3E👻%3C/text%3E%3C/svg%3E`},
@@ -327,36 +327,27 @@
                 else {
                     cardContainer.innerHTML = `<div class="quiz-card flex items-center justify-center text-center"><h2 class="text-2xl font-extrabold text-slate-700">おつかれさま！<br>診断レポートを作成するよ！</h2></div>`;
                     setTimeout(() => {
-                         renderModal(templates.linePrompt);
+                          renderModal(templates.linePrompt);
                     }, 800);
                 }
             }, 300);
         }
 
-        /**
-         * @function showFinalResultsPage
-         * @description アンケート送信後に、画面全体を最終結果表示に切り替える関数
-         */
         function showFinalResultsPage() {
-            // 上部のプログレスバーを非表示にする
             const mainProgressBar = document.querySelector('.progress-bar-container');
             if (mainProgressBar) mainProgressBar.style.display = 'none';
 
-            // メインの表示領域を結果表示に書き換える
             cardContainer.innerHTML = templates.results(currentScore, userSelections, false);
             cardContainer.classList.remove('relative');
             cardContainer.style.minHeight = 'auto';
 
-            // 新しく作られた「閉じる」ボタンにイベントリスナーを追加する
             const closeButton = document.getElementById('close-final-results-button');
             if (closeButton) {
                 closeButton.addEventListener('click', () => {
                     playSound('click');
-                    // 閉じるボタンが押されたら、感謝のメッセージを表示
                     cardContainer.innerHTML = `<div class="survey-shell flex items-center justify-center text-center" style="min-height: 500px;">
                         <h2 class="text-2xl font-extrabold text-slate-700">ご協力ありがとうございました！<br>このウィンドウを閉じてください。</h2>
                     </div>`;
-                    // LINEアプリ内で開かれている場合は、ウィンドウを閉じる
                     if (typeof liff !== 'undefined' && liff.isInClient()) {
                         setTimeout(() => liff.closeWindow(), 2000);
                     }
@@ -366,36 +357,43 @@
 
         /**
          * @function submitSurveyDataToGAS
-         * @description アンケートデータをGASに送信する関数。成功時・失敗時の表示ロジックを修正。
+         * @description アンケートデータをGASに送信する関数（デバッグ強化版）
          */
         async function submitSurveyDataToGAS() {
             renderModal(`
                 <div style="background:white; border-radius:1.5rem; padding:2rem; text-align:center;">
                     <h2 class="text-xl font-bold text-indigo-600 mb-2">送信中...</h2>
-                    <p id="save-status" class="text-slate-600 font-bold mb-4"></p>
+                    <p id="save-status" class="text-slate-600 font-bold mb-4">少し待ってね</p>
                     <div class="w-16 h-16 border-4 border-dashed rounded-full animate-spin border-indigo-500 mx-auto"></div>
                 </div>
             `, false);
 
-            const statusElement = document.getElementById('save-status');
-
             try {
-                await liff.init({ liffId: LIFF_ID });
-
-                if (!liff.isLoggedIn()) {
-                    const stateToSave = {
-                        currentScore: currentScore,
-                        userSelections: userSelections,
-                        surveyAnswers: surveyAnswers
-                    };
-                    sessionStorage.setItem('appState', JSON.stringify(stateToSave));
-                    sessionStorage.setItem('isLiffLoginRedirect', 'true');
-                    liff.login({ redirectUri: window.location.href }); 
-                    return; 
+                // LIFF初期化 (IDが空または無効な場合のフォールバック追加)
+                let userId = "unknown_user";
+                try {
+                    await liff.init({ liffId: LIFF_ID });
+                    if (!liff.isLoggedIn()) {
+                        // 未ログインで、まだリダイレクトしていない場合のみリダイレクト
+                        if (sessionStorage.getItem('isLiffLoginRedirect') !== 'true') {
+                            const stateToSave = {
+                                currentScore: currentScore,
+                                userSelections: userSelections,
+                                surveyAnswers: surveyAnswers
+                            };
+                            sessionStorage.setItem('appState', JSON.stringify(stateToSave));
+                            sessionStorage.setItem('isLiffLoginRedirect', 'true');
+                            liff.login({ redirectUri: window.location.href }); 
+                            return; 
+                        }
+                    } else {
+                        const profile = await liff.getProfile();
+                        userId = profile.userId;
+                    }
+                } catch (e) {
+                    console.warn("LIFF initialization failed or running outside LINE:", e);
+                    // LIFF失敗でも続行する（ブラウザテスト用）
                 }
-
-                const profile = await liff.getProfile();
-                const userId = profile.userId;
                 
                 const quizResults = quizData.map((q, index) => {
                     const userAnswer = userSelections[index] || "未回答";
@@ -414,53 +412,67 @@
                     quizResults: quizResults
                 };
                 
+                // ★ デバッグログ: 送信先URLとデータ
+                console.log("Submitting to:", GAS_WEB_APP_URL);
+                console.log("Payload:", payload);
+
+                // Fetch送信
                 const response = await fetch(GAS_WEB_APP_URL, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'text/plain;charset=utf-8',
+                        'Content-Type': 'text/plain;charset=utf-8', // GASのCORS回避用
                     },
                     body: JSON.stringify(payload)
                 });
 
-                // ★★★ 変更点: ここから修正したコード ★★★
-                // Check if the request was successful (status in the range 200-299)
                 if (!response.ok) {
-                    // Try to get more details from the response body if possible
-                    const errorText = await response.text();
-                    console.error("GASへのHTTPエラー:", response.status, response.statusText, errorText);
-                    throw new Error(`サーバーとの通信に失敗しました (HTTP ${response.status})。Web Appのデプロイ設定を確認してください。`);
+                    throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
                 }
 
                 const result = await response.json();
+                console.log("GAS Response:", result);
 
                 if (result.result !== 'success') {
-                    // This handles errors reported by the GAS script itself (e.g., spreadsheet issues)
-                    throw new Error(result.message || 'スプレッドシートへの保存に失敗しました。');
+                    throw new Error(result.message || 'Script Error occurred');
                 }
-                // ★★★ 変更点: ここまで ★★★
                 
-                // 送信成功時: モーダルではなく、ページ全体を結果表示に切り替える
-                closeModal(); // 「送信中」モーダルを閉じる
+                closeModal();
                 showFinalResultsPage();
 
             } catch (error) {
-                console.error("GASへの送信エラー:", error);
+                console.error("Submission Failed:", error);
+                
+                let errorMessage = "エラーが発生しました。";
+                if (error.message.includes("Failed to fetch") || error.message.includes("NetworkError")) {
+                    errorMessage = "通信エラーです。<br>URLが正しいか確認してください。<br>（CORSエラーの可能性あり）";
+                } else if (error.message.includes("HTTP Error")) {
+                    errorMessage = `サーバーエラー: ${error.message}<br>GASのデプロイ設定を確認してください。`;
+                } else {
+                    errorMessage = `エラー詳細:<br>${error.message}`;
+                }
+
                 renderModal(`
                     <div style="background:white; border-radius:1.5rem; padding:2rem; text-align:center;">
-                        <h2 class="text-xl font-bold text-red-600 mb-2">保存エラー</h2>
-                        <p class="text-slate-600 font-bold mb-4">
-                            回答の保存中にエラーが発生しました。<br>時間をおいて再度お試しください。
+                        <h2 class="text-xl font-bold text-red-600 mb-2">送信失敗</h2>
+                        <p class="text-slate-600 font-bold mb-4 text-sm">
+                            ${errorMessage}
                         </p>
-                        <p class="text-xs text-slate-500 mb-4" style="word-wrap: break-word;">${error.message}</p>
+                        <p class="text-xs text-slate-400 mb-4 bg-slate-100 p-2 rounded text-left overflow-auto max-h-24">
+                            URL: ${GAS_WEB_APP_URL}<br>
+                            Err: ${error.toString()}
+                        </p>
                         <button id="show-results-anyway-button" class="action-button">結果だけ見る</button>
                     </div>
-                `);
-                document.getElementById('show-results-anyway-button').addEventListener('click', () => {
-                    playSound('click');
-                    // エラー時でも、ページ全体を結果表示に切り替える
-                    closeModal(); // エラーモーダルを閉じる
-                    setTimeout(showFinalResultsPage, 300); // モーダルが閉じるのを待ってから表示
-                });
+                `, false); // リスナーは下記で手動追加
+
+                 const btn = document.getElementById('show-results-anyway-button');
+                 if(btn) {
+                     btn.addEventListener('click', () => {
+                        playSound('click');
+                        closeModal();
+                        setTimeout(showFinalResultsPage, 300);
+                     });
+                 }
             }
         }
 
@@ -482,10 +494,7 @@
 
         function renderSurveyScreen(index, isInitial = false) {
             const screenData = surveyData[index];
-            if (!screenData) {
-                console.error("Survey screen data not found for index:", index);
-                return;
-            }
+            if (!screenData) return;
             const contentHTML = buildSurveyScreenHTML(screenData);
             const surveyContentArea = document.getElementById('survey-content-area');
             if(!surveyContentArea) return;
@@ -513,7 +522,6 @@
             const isQuestion = ['radio', 'likert', 'consent'].includes(screenData.type);
             const savedAnswer = surveyAnswers[screenData.id];
             
-            // Calculate screen number for display, skipping non-question types
             const questionScreens = surveyData.filter(s => ['radio', 'likert', 'consent'].includes(s.type));
             const currentScreenNum = questionScreens.findIndex(s => s.id === screenData.id) + 1;
 
@@ -556,11 +564,11 @@
                     </div>
                 `;
             } else if (screenData.type === 'section_header') {
-                 navigationHTML = `<div class="h-16 mt-6"></div>`; // Placeholder for auto-advance
+                 navigationHTML = `<div class="h-16 mt-6"></div>`;
             } else if (currentSurveyScreen > 0) {
                  navigationHTML = `<div class="flex justify-center mt-6"><button id="survey-back-button" class="survey-nav-button survey-back-button w-1/2">戻る</button></div>`;
             } else {
-                 navigationHTML = `<div class="h-16 mt-6"></div>`; // Placeholder
+                 navigationHTML = `<div class="h-16 mt-6"></div>`;
             }
             
             const progress = (currentScreenNum > 0 ? (currentScreenNum / totalScreens) * 100 : 0);
@@ -624,7 +632,6 @@
             surveyContentArea.dataset.direction = direction;
 
             if (direction === 'next') {
-                // Save answer for the current screen before navigating
                 const screenData = surveyData[currentSurveyScreen];
                 if (screenData) {
                     const isQuestion = ['radio', 'likert', 'consent'].includes(screenData.type);
@@ -636,10 +643,8 @@
                     }
                 }
 
-                // Check if we can navigate to the next screen
                 if (currentSurveyScreen < surveyData.length - 1) {
                     currentSurveyScreen++;
-                    // Skip non-interactive screens automatically on back navigation
                     while(surveyData[currentSurveyScreen].type === 'section_header' && direction === 'back') {
                         currentSurveyScreen--;
                     }
@@ -649,15 +654,13 @@
                 }
 
             } else { // back
-                // Check if we can navigate to the previous screen
                 if (currentSurveyScreen > 0) {
                     currentSurveyScreen--;
-                     // Skip non-interactive screens automatically on back navigation
-                    while(surveyData[currentSurveyScreen].type === 'section_header') {
+                     while(surveyData[currentSurveyScreen].type === 'section_header') {
                         if (currentSurveyScreen > 0) {
                             currentSurveyScreen--;
                         } else {
-                            break; // Avoid infinite loop at the start
+                            break;
                         }
                     }
                     renderSurveyScreen(currentSurveyScreen);
@@ -669,7 +672,6 @@
         
         // --- INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', () => {
-            // LIFFログインからのリダイレクト後の復元処理
             if (sessionStorage.getItem('isLiffLoginRedirect') === 'true') {
                 sessionStorage.removeItem('isLiffLoginRedirect');
                 const savedState = JSON.parse(sessionStorage.getItem('appState'));
@@ -678,10 +680,8 @@
                     userSelections = savedState.userSelections;
                     surveyAnswers = savedState.surveyAnswers;
                     sessionStorage.removeItem('appState');
-                    
-                    // 保存されたデータを使って、直接送信処理を再開
                     submitSurveyDataToGAS();
-                    return; // 通常の初期化をスキップ
+                    return;
                 }
             }
             
